@@ -31,26 +31,31 @@ bool Connection::sendMessage(DataType header, const QJsonObject &data)
 
 void Connection::processReadyRead()
 {
+    // 读取header，验证有效性
     if (current_data_type == Undefined) {
         if (!readHeader())
             return;
     }
+    // 读取并解析Json
     QByteArray data = readAll();
     QJsonParseError json_error;
     QJsonDocument json_doc = QJsonDocument::fromJson(data, &json_error);
     if(json_error.error == QJsonParseError::NoError) {
         QJsonObject json = json_doc.object();
         switch(current_data_type) {
+        case Undefined:
+            break;
         case Ping:
             sendPong();
             break;
         case Pong:
             pong_time.restart();
             break;
-        case Request_ChatMessage:
-            emit receiveMessage(Request_ChatMessage, json);
-        // ...
+        // -----以下部分可扩展报文类型 自定义Connection层的处理-----
+		// 
+        // -----------------------------------------------------
         default:
+            emit receiveMessage(current_data_type, json);
             break;
         }
     }
@@ -69,6 +74,7 @@ void Connection::connected()
 
 void Connection::sendPing()
 {
+    // 附加功能，ping超过某一个时长没收到响应pong，则立即终止连接
     if (pong_time.elapsed() > PongTimeout) {
         abort();
         return;
@@ -92,6 +98,7 @@ QByteArray Connection::encodeDataTypeToHeader(DataType type)
 bool Connection::readHeader()
 {
     char c = read(1).at(0);
+    if (c < '!') return false;  // 待增加上限检查
     current_data_type = DataType(int(c) - int('!'));
     return true;
 }
