@@ -24,13 +24,13 @@ Widget::Widget(QWidget *parent ,QString name)
     //大概是采用 shareaddress -> 允许其他的服务器连接到相同的地址和端口
     //         ReuseAddressHint -> 重连服务器（应用于多客户端监听同一个服务器端口超级有效）
 
-    connect(udpSocket,&QUdpSocket::readyRead,this,&Widget::ReceiveMessage);
+  //  connect(udpSocket,&QUdpSocket::readyRead,this,&Widget::ReceiveMessage);
 
     connect(ui->sendBtn,&QPushButton::clicked,[=](){
-        sndMsg(Msg);
+       // sndMsg(Msg);
     });
 
-    sndMsg(UserEnter);//发送用户上线消息
+ //   sndMsg(UserEnter);//发送用户上线消息
 
     connect(ui->exitBtn,&QPushButton::clicked,[=]{
         this->close();
@@ -111,7 +111,7 @@ void Widget::closeEvent(QCloseEvent *)//处理用户离开
 {
     emit this->closeWidget();//当点击"关闭窗口"，就会发送信号，调用closeWidget()函数
 
-    sndMsg(UserLeft);//发送用户下线消息
+    //sndMsg(UserLeft);//发送用户下线消息
 
     udpSocket->close();
     udpSocket->destroyed();
@@ -131,6 +131,9 @@ QString Widget::getMsg()//获取聊天信息，重消息发送框
     ui->msgtxtEdit->setFocus();//光标复位
     return msg;
 }
+
+//This part should be rewriten
+/*
 
 void Widget::sndMsg(Widget::Msgtype type)//广播udp信息
 {
@@ -193,7 +196,9 @@ void Widget::userLeft(QString username,QString time)//处理用户离开
         ui->userNumLbl->setText(QString("在线人数：%1人").arg(ui->tableWidget->rowCount()));
     }
 }
-
+*/
+//This part should be rewriten!!!!!!!!!!
+/*
 void Widget::ReceiveMessage()//接收udp信息
 {
     qint64 size=udpSocket->pendingDatagramSize();//返回数据大小的函数
@@ -228,7 +233,7 @@ void Widget::ReceiveMessage()//接收udp信息
     }
     return;
 }
-
+*/
 
 Widget::~Widget()
 {

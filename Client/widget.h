@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QUdpSocket>
-
+#include"sr_service.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
@@ -17,7 +17,7 @@ public:
 
     void closeEvent(QCloseEvent *);  //重载关闭事件
     enum Msgtype{Msg,UserEnter,UserLeft};//枚举： 人发的消息内容，用户上线信息提示，用户下线信息提示
-    void sndMsg(Msgtype type);//广播udp信息
+   // void sndMsg(Msgtype type);//广播udp信息
     QString getName();//获取名字
     QString getMsg();//获取聊天信息
     void userEnter(QString username);//处理用户进入

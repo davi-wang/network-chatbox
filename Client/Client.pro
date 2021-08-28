@@ -16,12 +16,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    connection.cpp \
     login.cpp \
     main.cpp \
+    sr_service.cpp \
     widget.cpp
 
 HEADERS += \
+    connection.h \
     login.h \
+    sr_service.h \
     widget.h
 
 FORMS += \
@@ -33,5 +37,11 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-RESOURCES += \
-    res.qrc
+DISTFILES += \
+    img/1.jpg \
+    img/bolder.png \
+    img/clear.png \
+    img/color.png \
+    img/italic.png \
+    img/save.png \
+    img/underline.png

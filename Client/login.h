@@ -3,7 +3,7 @@
 
 #include <QWidget>
 //#include<QPainter>
-
+#include"sr_service.h"
 
 namespace Ui {
 class login;
