@@ -75,3 +75,7 @@ QByteArray QJsonDocument::toJson(QJsonDocument::JsonFormat format)
 把它变成字符串
 
 如果那个参数填成QJsonDocument::Compact就会变成紧凑的json，没有空格和换行，读起来比较费劲，但可能会有利于传输
+
+对QJsonDocument对象使用.object()，即可提取到里面的对象
+
+> 关于如何从比特串转对象，我个人觉得把它封装到Connection里比较好
