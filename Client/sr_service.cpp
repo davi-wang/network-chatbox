@@ -2,7 +2,7 @@
 
 SR_Service::SR_Service()
 {
-    connect_fun=new Connection();
+
     status=false;
     m_skt= new QTcpSocket(this);
 
@@ -11,7 +11,7 @@ SR_Service::SR_Service()
 SR_Service::~SR_Service()
 {
     delete m_skt;
-    delete connect_fun;
+
 }
 
 bool SR_Service::Start_Server(QString IP, QString Port)
@@ -23,6 +23,9 @@ bool SR_Service::Start_Server(QString IP, QString Port)
         CurrentServer=new Server;
         CurrentServer->ServerIP=IP;
         CurrentServer->ServerPort=Port;
+        connect_fun=new Connection(m_skt);
+
+        connect(connect_fun,SIGNAL(receiveMessage),this,SLOT(RecieveMsg(DataType header, const QJsonObject &data)));
     }
     return status;
 }
@@ -31,7 +34,10 @@ bool SR_Service::Halt_Server(){
     m_skt->disconnect();
     connect(m_skt,SIGNAL(disconnected),this,SLOT(disconnect_status(bool)));
     if(!status)
+       {
         delete CurrentServer;
+        delete connect_fun;
+    }
     return !status;
 }
 
@@ -46,16 +52,35 @@ void SR_Service::disconnect_status(){
 }
 
 
-void SR_Service::SendMes(DataType req,QVector<QString> Data)
+void SR_Service::SendMes(DataType RequirementType,QJsonObject Data)
 {
     QJsonObject Mes2send;
-    Mes2send["DataType"]=req;
-    for(int index=0;index<Data.count();index++)
-    {
-        Mes2send[index]=Data[i];
-    }
+    QTime *time = new QTime();
 
-    QString mes;
-    mes=req;
-    m_skt
+
+    Mes2send.insert("Type",RequirementType);
+    Mes2send.insert("Sender",connect_fun->local_uid);
+    Mes2send.insert("Reciever",connect_fun->peer_uid);
+    Mes2send.insert("Time",time->currentTime().toString("hh:mm:ss"));
+    Mes2send.insert("Data",Data);
+    connect_fun->sendMessage(RequirementType,Mes2send);
+
+}
+
+Response SR_Service::SignUP(QString U_name, QString password, QString Email)
+{
+    QJsonObject SignUP;
+    SignUP.insert("U_name",U_name);
+    SignUP.insert("Password",password);
+    SignUP.insert("U_ID",Email);
+}
+
+
+
+
+void SR_Service::RecieveMsg(DataType header, const QJsonObject data)
+{
+    if(header==Respond_Register||header==Respond_Login)
+        flag=true;
+
 }
