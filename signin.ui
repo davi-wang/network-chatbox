@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SignIn</class>
+ <widget class="QWidget" name="SignIn">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>492</width>
+    <height>378</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>492</width>
+    <height>378</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>492</width>
+    <height>378</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">*{
+	background:rgb(129, 205, 255);
+	font-size:15px;
+	font-family:Century Gothic,sans-serif;
+}</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>50</y>
+     <width>431</width>
+     <height>271</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame{
+	background:rgba(0,0,0,0.8);
+	border-radius:15px;
+}</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>150</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QCheckBox{
+	background-color: rgb(85,17,255,0);
+	color:white;
+	font-size:16px;
+}</string>
+    </property>
+    <property name="text">
+     <string>Remember me</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="SignonBt">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>200</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	background:#069cfa;
+	color:#fff;
+	border-radius:15px;
+	font: 87 11pt &quot;Arial Black&quot;;
+}
+
+QPushButton:pressed{
+background-color:rgb(85, 255, 127);
+border-style:inset;
+}
+
+font: 87 11pt &quot;Arial Black&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Sign On</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="SigninBt">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>200</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	background:#069cfa;
+	color:#fff;
+	border-radius:15px;
+	font: 87 11pt &quot;Arial Black&quot;;
+}
+
+QPushButton:pressed{
+background-color:rgb(255, 170, 127);
+border-style:inset;
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Sign In</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="pswdEdit">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>90</y>
+      <width>371</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit{
+	color:rgb(25, 37, 44);
+	background-color:rgb(245, 245, 245);
+	font-size:16px;
+	border-style:outset;
+	border-radius:5px;
+}</string>
+    </property>
+    <property name="echoMode">
+     <enum>QLineEdit::Password</enum>
+    </property>
+    <property name="placeholderText">
+     <string>PassWord</string>
+    </property>
+   </widget>
+   <widget class="QToolButton" name="toolButton">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>150</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QToolButton{
+	background-color: rgb(85,17,255,0);
+	color:rgb(224, 227, 234);
+	font-style:italic bold;
+	font-size:16px;
+}
+
+QToolButton:pressed{
+	background-color:rgb(255, 98, 98);
+	border-style:inset;
+}</string>
+    </property>
+    <property name="text">
+     <string>Forget Password</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="userEdit">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>371</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QComboBox{
+	color:rgb(25, 37, 44);
+	background-color:rgb(245, 245, 245);
+	font-size:16px;
+	border-style:outset;
+	border-radius:5px;
+}</string>
+    </property>
+    <property name="editable">
+     <bool>true</bool>
+    </property>
+    <property name="currentText">
+     <string>Email</string>
+    </property>
+   </widget>
+   <zorder>checkBox</zorder>
+   <zorder>SignonBt</zorder>
+   <zorder>pswdEdit</zorder>
+   <zorder>toolButton</zorder>
+   <zorder>SigninBt</zorder>
+   <zorder>userEdit</zorder>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
