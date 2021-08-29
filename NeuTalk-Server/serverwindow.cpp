@@ -11,10 +11,14 @@ ServerWindow::ServerWindow(QWidget *parent)
     ui->textEdit->setTextColor(QColor(105,255,195));
 
     Server* pServer = Server::getInstance();
+    MySql* pDatabase = MySql::gethand();
 
     connect(pServer, SIGNAL(displayText(const QString &)), this, SLOT(displayLine(const QString &)));
+    connect(pDatabase, SIGNAL(dispalyUserstext(const QString &)), this, SLOT(displayLine(const QString &)));
 
     // 默认自动开启服务
+    displayLine("[INFO] Initializing database...");
+    pDatabase->openDatabase();
     displayLine("[INFO] Starting NeuTalk Server...");
     pServer->getHostInfo();
 }

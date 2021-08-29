@@ -26,6 +26,7 @@ void Server::lookedUp(QHostInfo host)
         hostadd_list.append(address);
         emit displayText("[INFO] Found host ip address " + address.toString());
     }
+    // 自动开启服务器
     if (!hostadd_list.empty()) {
         startServer(hostadd_list.at(0), default_port);
     }
@@ -36,8 +37,8 @@ void Server::connectClient(Connection *connection)
     connections.append(connection);
 
     connect(connection, SIGNAL(disconnect()), this, SLOT(closeClient()));
-    connect(connection, SIGNAL(receiveMessage(DataType, const QString &)),
-            this, SLOT(processMessage(DataType, const QString &)));
+    connect(connection, SIGNAL(receiveMessage(DataType, const QJsonObject &)),
+            this, SLOT(processMessage(DataType, const QJsonObject &)));
 
     QString add = connection->peerAddress().toString();
     emit displayText("[INFO] Client " + add + " connected.");
@@ -46,17 +47,28 @@ void Server::connectClient(Connection *connection)
 void Server::closeClient()
 {
     if (Connection *connection = qobject_cast<Connection *>(sender())) {
-        // 需要在列表里删除它的指针！目前列表似乎没用
+        // 需要在列表里删除它的指针！这个列表暂时没有用处
         connection->deleteLater();
         QString add = connection->peerAddress().toString();
         emit displayText("[INFO] Client " + add + " disconnected.");
     }
 }
 
-void Server::processMessage(Connection::DataType header, const QString &data)
+void Server::processMessage(Connection::DataType header, const QJsonObject &data)
 {
     if (header == Connection::Request_ChatMessage) {
-
+        QJsonValue send_to_uid = data.value("send_to_uid");
+        QString to = send_to_uid.toString();
+        // 检查是否在线
+        if (true) {
+            // 查一个uid到Connection的映射
+            Connection *target=nullptr;
+            target->sendMessage(Connection::Request_ChatMessage, data);
+        }
+        // 存到历史记录数据库
+    }
+    else if (true) {
+        // 其他消息处理
     }
 }
 

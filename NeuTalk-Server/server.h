@@ -12,6 +12,7 @@
 
 #include "tcpserver.h"
 #include "connection.h"
+#include "mailsender.h"
 
 class Server : public QObject
 {
@@ -38,7 +39,7 @@ private slots:
     void lookedUp(QHostInfo host);
     void connectClient(Connection *connection);  // 被TcpServer的信号触发 处理新连接
     void closeClient();  // 被Socket的信号触发，关闭连接
-    void processMessage(Connection::DataType header, const QString &data);  // 被Connection的信号触发，处理报文
+    void processMessage(Connection::DataType header, const QJsonObject &data);  // 被Connection的信号触发，处理报文
 
 private:
     explicit Server(QObject *parent = nullptr);

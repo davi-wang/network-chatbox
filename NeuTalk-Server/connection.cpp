@@ -77,6 +77,7 @@ void Connection::sendPing()
     // 附加功能，ping超过某一个时长没收到响应pong，则立即终止连接
     if (pong_time.elapsed() > PongTimeout) {
         abort();
+        qDebug() << "Connection is aborted for ping timeout.";
         return;
     }
     else {

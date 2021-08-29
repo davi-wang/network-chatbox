@@ -24,6 +24,9 @@ public:
         Undefined,
         Ping,
         Pong,
+        R1_request_email,
+
+
         Request_Register, Respond_Register,
         Request_Login, Respond_Login,
         Request_ChatMessage, Respond_ChatMessage,

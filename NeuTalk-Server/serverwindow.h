@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "server.h"
+#include "mysql.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ServerWindow; }
