@@ -17,18 +17,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     connection.cpp \
-    login.cpp \
     main.cpp \
     signup.cpp \
     sr_service.cpp \
-    widget.cpp
+    text_msg.cpp
 
 HEADERS += \
     connection.h \
-    login.h \
     signup.h \
     sr_service.h \
-    widget.h
+    text_msg.h
 
 FORMS += \
     login.ui \

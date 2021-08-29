@@ -11,6 +11,8 @@ void SignUp::SignUp_GetEmail(QString Verify)
 {
     QJsonObject SignUP;
     SignUP.insert("Verify",Verify);
+    SignUP.insert("Time",time.currentTime().toString("hh:mm:ss"));
+    SignUP.insert("UsrInfo",Usr);
     Connector->sendMessage(Connection::R4_request_register,SignUP);
 }
 
@@ -26,12 +28,17 @@ void SignUp::SignUp_GetUser(QString UsrName, QString password, QString Email)
     QByteArray result_byte_array = hash.result();  //返回最终的哈希值
     QString md5PassWord = result_byte_array.toHex();
 
-    QJsonObject SignUP;
-    SignUP.insert("Time",time.currentTime().toString("hh:mm:ss"));
-    SignUP.insert("U_name",UsrName);
-    SignUP.insert("Password",md5PassWord);
-    SignUP.insert("Email",Email);
-    Connector->sendMessage(Connection::R1_request_email,SignUP);
+
+    Usr.insert("Time",time.currentTime().toString("hh:mm:ss"));
+    Usr.insert("U_name",UsrName);
+    Usr.insert("Password",md5PassWord);
+    Usr.insert("Email",Email);
+
+    QJsonObject Email_Verify;
+    Email_Verify.insert("Email",Email);
+    Email_Verify.insert("Time",time.currentTime().toString("hh:mm:ss"));
+
+    Connector->sendMessage(Connection::R1_request_email,Email_Verify);
 
 }
 

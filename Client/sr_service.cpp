@@ -59,8 +59,6 @@ void SR_Service::SendMes(Connection::DataType RequirementType,QJsonObject Data)
     QJsonObject Mes2send;
     QTime *time = new QTime();
 
-
-    Mes2send.insert("Type",RequirementType);
     Mes2send.insert("Sender",connect_fun->local_uid);
     Mes2send.insert("Reciever",connect_fun->peer_uid);
     Mes2send.insert("Time",time->currentTime().toString("hh:mm:ss"));
@@ -72,8 +70,8 @@ void SR_Service::SendMes(Connection::DataType RequirementType,QJsonObject Data)
 void SR_Service::Sign()
 {
   SignAccount=new SignUp(connect_fun);
-  connect(SignAccount,SIGNAL(Success),this,SLOT(Signresponce()));
-  connect(SignAccount,SIGNAL(Fail),this,SLOT(Signresponce()));
+  connect(SignAccount,SIGNAL(Success),this,SLOT(Signresponce));
+  connect(SignAccount,SIGNAL(Fail),this,SLOT(Signresponce));
 }
 
 void SR_Service::SignEND()
@@ -82,9 +80,3 @@ void SR_Service::SignEND()
 }
 
 
-void SR_Service::RecieveMsg(Connection::DataType header, const QJsonObject data)
-{
-
-
-
-}

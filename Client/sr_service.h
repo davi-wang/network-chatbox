@@ -15,7 +15,7 @@
 #include<windows.h>
 #include<QCoreApplication>
 #include"signup.h"
-
+#include "text_msg.h"
 
 
 struct Server{
@@ -66,8 +66,7 @@ void PleaseVerifyEmail();
 
 
 //Don't use these signals, they are limited in this Object.
-//void LogInSuccess();
-//void SendSuccess();
+
 
 
 
@@ -86,6 +85,7 @@ private:
     QJsonObject *TemStash;
 
     SignUp *SignAccount;
+    Text_Msg *TextMsgServer;
 
     void SendMes(Connection::DataType req,QJsonObject Data);
 
@@ -98,7 +98,6 @@ private:
 private slots:
     void connect_status();
     void disconnect_status();
-    void RecieveMsg(Connection::DataType header, const QJsonObject data);
     void SignEND();
 };
 

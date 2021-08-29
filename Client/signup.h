@@ -6,6 +6,10 @@
 #include<QCoreApplication>
 #include<QJsonObject>
 #include<QTime>
+
+
+
+
 class SignUp:public QObject
 {
     Q_OBJECT
@@ -20,6 +24,7 @@ private:
     Connection* Connector;
     bool flag;
     QTime time;
+    QJsonObject Usr;
 
 
 
