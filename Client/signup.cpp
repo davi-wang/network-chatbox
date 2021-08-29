@@ -27,7 +27,6 @@ void SignUp::SignUp_GetUser(QString UsrName, QString password, QString Email)
     QString md5PassWord = result_byte_array.toHex();
 
     QJsonObject SignUP;
-    SignUP.insert("Type",Connection::R1_request_email);
     SignUP.insert("Time",time.currentTime().toString("hh:mm:ss"));
     SignUP.insert("U_name",UsrName);
     SignUP.insert("Password",md5PassWord);
@@ -46,7 +45,6 @@ void SignUp::SignIn(QString Email, QString password)
     QString md5PassWord = result_byte_array.toHex();
 
     QJsonObject SignIN;
-    SignIN.insert("Type",Connection::L1_request_login);
     SignIN.insert("Time",time.currentTime().toString("hh:mm:ss"));
     SignIN.insert("Password",md5PassWord);
     SignIN.insert("Email",Email);

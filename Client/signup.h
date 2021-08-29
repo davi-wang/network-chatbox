@@ -24,14 +24,20 @@ private:
 
 
 private slots:
-    void RecieveMsg(Connection::DataType header, const QJsonObject data);
-
+    void RecieveMsg_Reg(Connection::DataType header, const QJsonObject data);
+    void RecieveMsg_log(Connection::DataType header, const QJsonObject data);
 
 signals:
     void EmailSENGING();
     void EmailVERIFY();
     void Success(QJsonObject Info);
     void Fail(QJsonObject reason);
+
+    void logging();
+    void Fail_log(QJsonObject Data);
+    void SuccessLog();
+    void GetSynchro_Data(QJsonObject Data);
+    void Synchro_DataComplete();
 
 
 };
