@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include "mainwindow.h"
 
 #include <QApplication>
@@ -7,10 +8,16 @@
 #include <QSqlDatabase>
 #include <QDebug>
 #include <QSqlQuery>
+=======
+#include "widget.h"
+#include <QApplication>
+#include "login.h"
+>>>>>>> c01830f99e2b4ccd01168459f2184a5ad4aa4376
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+<<<<<<< HEAD
 
     //创建数据库
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
@@ -38,5 +45,12 @@ int main(int argc, char *argv[])
     signin.show();
 //    Signon signon; //注册页面
 //    signon.show();
+=======
+//    Widget w;
+//    w.show();
+
+    SR_Service Server;
+
+>>>>>>> c01830f99e2b4ccd01168459f2184a5ad4aa4376
     return a.exec();
 }
