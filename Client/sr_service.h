@@ -9,9 +9,13 @@
 #include<QJsonDocument>
 #include<QBitArray>
 #include<QTime>
-#include"processingmsg.h"
+
 #include<QVector>
 #include<QThread>
+#include<windows.h>
+#include<QCoreApplication>
+#include"signup.h"
+
 
 
 struct Server{
@@ -41,11 +45,10 @@ public:
 
 
     //sending functions
-    Response Signin(QString U_name,QString password);                // sign in
-    Response SignUP(QString U_name,QString password,QString Email);  //sign up
+    void Sign();
     Response Sendtxt(QString U_peerID,QJsonObject Msg);                  //send text Msg
     Response SendFile(QString U_peerID,QString FilePath);            //send files
-
+    bool Start_Server(QString IP,QString Port);  //connect
 
     //recieving functions
 
@@ -55,9 +58,16 @@ void TextMsg(QJsonObject text,QString Sender);             //recieve textMsg
 void GetFile(QString FileName);             //recieve file, Write the file into hardDisk
 void Userinfo(QJsonObject User);            //recieve info
 
+//SignUP part signal
+void EmailSending();
+void PleaseVerifyEmail();
+
+
+
+
 //Don't use these signals, they are limited in this Object.
-void LogInSuccess();
-void SendSuccess();
+//void LogInSuccess();
+//void SendSuccess();
 
 
 
@@ -75,10 +85,10 @@ private:
     QJsonObject* Message;
     QJsonObject *TemStash;
 
+    SignUp *SignAccount;
 
+    void SendMes(Connection::DataType req,QJsonObject Data);
 
-    void SendMes(DataType req,QJsonObject Data);
-    bool Start_Server(QString IP,QString Port);  //connect
 
 
     bool flag;
@@ -88,8 +98,8 @@ private:
 private slots:
     void connect_status();
     void disconnect_status();
-    void RecieveMsg(DataType header, const QJsonObject data);
-
+    void RecieveMsg(Connection::DataType header, const QJsonObject data);
+    void SignEND();
 };
 
 #endif // SR_SERVICE_H

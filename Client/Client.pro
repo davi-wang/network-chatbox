@@ -19,12 +19,14 @@ SOURCES += \
     connection.cpp \
     login.cpp \
     main.cpp \
+    signup.cpp \
     sr_service.cpp \
     widget.cpp
 
 HEADERS += \
     connection.h \
     login.h \
+    signup.h \
     sr_service.h \
     widget.h
 

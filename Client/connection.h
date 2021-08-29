@@ -12,17 +12,32 @@
 #include <QJsonDocument>
 #include <QJsonValue>
 
-enum DataType {
-    Undefined,
-    Ping,
-    Pong,
-    Request_Register, Respond_Register,
-    Request_Login, Respond_Login,
-    Request_ChatMessage, Respond_ChatMessage,
-    Request_File,Respond_File
-};
+
 class Connection : public QTcpSocket
 {
+public:
+    enum DataType {
+        Undefined,
+        Ping,
+        Pong,
+        R1_request_email,
+        R2_verification_sending,
+        R3_verification_sent,
+        R4_request_register,
+        R5_fail,
+        R6_success,
+        L1_request_login,
+        L2_logging,
+        L3_fail,
+        L4_success,
+        L5_synchro_data,
+        L6_synchronization_complete,
+        C1_request_chat,
+        C2_sychro_history,
+        C3_request_message,
+        C4_send_message,
+        // ...
+    };
     Q_OBJECT
 public:
     Connection(QObject *parent = nullptr);
@@ -46,6 +61,7 @@ private slots:
     void processReadyRead();
     void sendPing();
     void sendPong();
+
 
 private:
     QByteArray encodeDataTypeToHeader(DataType type);

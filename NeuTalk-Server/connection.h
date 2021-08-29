@@ -40,6 +40,7 @@ public:
         C2_sychro_history,
         C3_request_message,
         C4_send_message,
+
         // ...
     };
 

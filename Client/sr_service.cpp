@@ -10,6 +10,7 @@ SR_Service::SR_Service()
 }
 SR_Service::~SR_Service()
 {
+
     delete m_skt;
 
 }
@@ -25,7 +26,7 @@ bool SR_Service::Start_Server(QString IP, QString Port)
         CurrentServer->ServerPort=Port;
         connect_fun=new Connection(m_skt);
 
-        connect(connect_fun,SIGNAL(receiveMessage),this,SLOT(RecieveMsg(DataType header, const QJsonObject &data)));
+        connect(connect_fun,SIGNAL(receiveMessage(DataType,QJsonObject)),this,SLOT(RecieveMsg(DataType header, const QJsonObject &data)));
     }
     return status;
 }
@@ -47,12 +48,13 @@ void SR_Service::connect_status(){
 
 }
 void SR_Service::disconnect_status(){
+    m_skt->close();
     status=false;
 
 }
 
 
-void SR_Service::SendMes(DataType RequirementType,QJsonObject Data)
+void SR_Service::SendMes(Connection::DataType RequirementType,QJsonObject Data)
 {
     QJsonObject Mes2send;
     QTime *time = new QTime();
@@ -67,20 +69,22 @@ void SR_Service::SendMes(DataType RequirementType,QJsonObject Data)
 
 }
 
-Response SR_Service::SignUP(QString U_name, QString password, QString Email)
+void SR_Service::Sign()
 {
-    QJsonObject SignUP;
-    SignUP.insert("U_name",U_name);
-    SignUP.insert("Password",password);
-    SignUP.insert("U_ID",Email);
+  SignAccount=new SignUp(connect_fun);
+  connect(SignAccount,SIGNAL(Success),this,SLOT(Signresponce()));
+  connect(SignAccount,SIGNAL(Fail),this,SLOT(Signresponce()));
+}
+
+void SR_Service::SignEND()
+{
+    delete SignAccount;
 }
 
 
-
-
-void SR_Service::RecieveMsg(DataType header, const QJsonObject data)
+void SR_Service::RecieveMsg(Connection::DataType header, const QJsonObject data)
 {
-    if(header==Respond_Register||header==Respond_Login)
-        flag=true;
+
+
 
 }
