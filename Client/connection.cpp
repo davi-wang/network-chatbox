@@ -20,12 +20,13 @@ Connection::Connection(QObject *parent)
 
 }
 
-void Connection::sendMessage(DataType header, const QString &data)
+bool Connection::sendMessage(DataType header, const QJsonObject &data)
 {
-    QDataStream out(this);
-    out.setVersion(QDataStream::Qt_5_9);
-    out << static_cast<qint32>(header);
-    out << data;
+    QByteArray message;
+    QJsonDocument json(data);
+    QJsonDocument::JsonFormat format = QJsonDocument::Compact;
+    message = encodeDataTypeToHeader(header) + json.toJson(format);
+    return write(message) == message.size();
 }
 
 void Connection::processReadyRead()
@@ -34,23 +35,27 @@ void Connection::processReadyRead()
         if (!readHeader())
             return;
     }
-    QString data;
-    QDataStream in(this);
-    in.setVersion(QDataStream::Qt_5_9);
-    in >> data;
-
-    switch(current_data_type) {
-    case Ping:
-        sendPong();
-        break;
-    case Pong:
-        pong_time.restart();
-        break;
-    case Request_ChatMessage:
-        emit receiveMessage(Request_ChatMessage, data);
-    // ...
-    default:
-        break;
+    QByteArray data = readAll();
+    QJsonParseError json_error;
+    QJsonDocument json_doc = QJsonDocument::fromJson(data, &json_error);
+    if(json_error.error == QJsonParseError::NoError) {
+        QJsonObject json = json_doc.object();
+        switch(current_data_type) {
+        case Ping:
+            sendPong();
+            break;
+        case Pong:
+            pong_time.restart();
+            break;
+        case Request_ChatMessage:
+            emit receiveMessage(Request_ChatMessage, json);
+        // ...
+        default:
+            break;
+        }
+    }
+    else {
+        qDebug() << "Json parse error: " << json_error.error;
     }
     current_data_type = Undefined;
 }
@@ -69,28 +74,24 @@ void Connection::sendPing()
         return;
     }
     else {
-        QDataStream out(this);
-        out.setVersion(QDataStream::Qt_5_9);
-        out << static_cast<qint32>(Ping);
+        sendMessage(Ping, QJsonObject());
     }
 }
 
 void Connection::sendPong()
 {
-    QDataStream out(this);
-    out.setVersion(QDataStream::Qt_5_9);
-    out << static_cast<qint32>(Pong);
+    sendMessage(Pong, QJsonObject());
+}
+
+QByteArray Connection::encodeDataTypeToHeader(DataType type)
+{
+    char byte = '!' + int(type);
+    return QByteArray(&byte, 1);
 }
 
 bool Connection::readHeader()
 {
-    QDataStream in(this);
-    in.setVersion(QDataStream::Qt_5_9);
-    qint32 temp = -1;
-    in >> temp;
-    // 有效性检查，暂时没有
-    if (temp == -1) return false;
-    current_data_type = static_cast<DataType>(temp);
+    char c = read(1).at(0);
+    current_data_type = DataType(int(c) - int('!'));
     return true;
 }
-
