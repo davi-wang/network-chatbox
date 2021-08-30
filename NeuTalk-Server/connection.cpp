@@ -7,8 +7,8 @@ static const int PingInterval = 5 * 1000;
 Connection::Connection(QObject *parent)
     : QTcpSocket(parent)
 {
-    local_uid = "";
-    peer_uid = "";
+    local_uid = -1;
+    peer_uid = -1;
     ping_timer.setInterval(PingInterval);
     current_data_type = Undefined;
 //    transfer_timer_id = 0;

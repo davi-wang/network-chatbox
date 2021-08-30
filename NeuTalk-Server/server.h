@@ -35,6 +35,8 @@ signals:
     // 传给ui窗口的信号
     void serverIsUp();
     void displayText(const QString &);
+    //
+    void synchro_friend_list_for(Connection*);
 
 private slots:
     void lookedUp(QHostInfo host);

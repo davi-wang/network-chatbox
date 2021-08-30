@@ -31,7 +31,7 @@ public:
     void dropTable(QString tableName);//删除表
     void createUserstable();//创建用户信息表
     int registerUser(QString email, QString nickname, QString password);//用户注册
-    bool login(QString email, QString password);//用户登录
+    bool login(QString email, QString password, int &);//用户登录
     bool queryUserInfo(QString email);//查询用户_通过email
     QJsonObject queryFriendlist(int user_uid);//查询某用户好友列表
     void createFriendshiptable();//创建好友关系表

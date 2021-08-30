@@ -45,8 +45,8 @@ public:
     };
 
     // 双方的唯一标识符，由服务器一次性分配，初始化为空（代表未登录）
-    QString local_uid;
-    QString peer_uid;
+    int local_uid;
+    int peer_uid;
 
     // 发送报文的接口
     bool sendMessage(DataType header, const QJsonObject &data);

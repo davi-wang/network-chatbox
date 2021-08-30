@@ -9,7 +9,10 @@ class EmailVerify
 {
 public:
     enum VerificationError {
-        NoError, InvalidEmail, Timeout, WrongCode
+        NoError = 0,
+        InvalidEmail = 1,
+        Timeout = 2,
+        WrongCode = 3
     };
     struct Node {
         QDateTime datetime;

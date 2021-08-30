@@ -47,7 +47,10 @@ void Server::connectClient(Connection *connection)
 void Server::closeClient()
 {
     if (Connection *connection = qobject_cast<Connection *>(sender())) {
-        //
+        // 客户端下线处理
+        if (onlines.contains(connection->peer_uid)) {
+            onlines.remove(connection->peer_uid);
+        }
         connection->deleteLater();
         QString add = connection->peerAddress().toString();
         emit displayText("[INFO] Client " + add + " disconnected.");
@@ -57,24 +60,27 @@ void Server::closeClient()
 void Server::processMessage(Connection::DataType header, const QJsonObject &data)
 {
     Connection* client_connection = qobject_cast<Connection*>(sender());
-    if (header == Connection::C3_request_message) {
+    qDebug() << "Server received <" << header <<
+                "> from client:" << client_connection->peerAddress().toString();
+    if (header == Connection::C3_request_message)
+    {
         QJsonValue send_to_uid = data.value("send_to_uid");
         QString to = send_to_uid.toString();
-        // 检查是否在线
-        if (true) {
-            // 查一个uid到Connection的映射
-            Connection *target=nullptr;
-            target->sendMessage(Connection::C3_request_message, data);
+        if (onlines.contains(send_to_uid.toInt())) {
+            Connection *send_to = onlines.value(send_to_uid.toInt());
+            send_to->sendMessage(Connection::C4_send_message, data);
         }
         // 存到历史记录数据库
     }
-    else if (header == Connection::R1_request_email) {
+    else if (header == Connection::R1_request_email)
+    {
         QByteArray user_email = data.value("user_email").toString().toUtf8();
         client_connection->sendMessage(Connection::R2_verification_sending, QJsonObject());
         this->email_verify.requestVerify(user_email);
         client_connection->sendMessage(Connection::R3_verification_sent, QJsonObject());
     }
-    else if (header == Connection::R4_request_register) {
+    else if (header == Connection::R4_request_register)
+    {
         QByteArray user_email = data.value("user_email").toString().toUtf8();
         QString username = data.value("username").toString();
         QByteArray password = data.value("password").toString().toUtf8();
@@ -94,7 +100,44 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
             client_connection->sendMessage(Connection::R5_fail, reply);
         }
     }
+    else if (header == Connection::L1_request_login)
+    {
+        QByteArray user_email = data.value("user_email").toString().toUtf8();
+        QByteArray password = data.value("password").toString().toUtf8();
+        client_connection->sendMessage(Connection::L2_logging, QJsonObject());
+        MySql* database = MySql::gethand();
+        int your_uid = -1;
+        if (database->login(user_email, password, your_uid)) {
+            QJsonObject reply;
+            reply.insert("your uid", QJsonValue(your_uid));
+            reply.insert("server uid", QJsonValue(int(0)));
+            client_connection->local_uid = 0;
+            client_connection->peer_uid = your_uid;
+            client_connection->sendMessage(Connection::L4_success, reply);
+            onlines[your_uid] = client_connection;
+            emit synchro_friend_list_for(client_connection);
+        }
+        else {
+            client_connection->sendMessage(Connection::L3_fail, QJsonObject());
+        }
+    }
+    else if (header == Connection::C1_request_chat)
+    {
+        // 查询历史消息
+        // 发送同步数据包C2
+    }
+    else {
+        qDebug() << "Undefined message received:" << header;
+    }
+}
 
+void Server::synchro_friend_list_for(Connection* client_connection)
+{
+    // 检查对方是否在线
+
+    // 发送同步数据包L5
+
+    client_connection->sendMessage(Connection::L6_synchronization_complete, QJsonObject());
 }
 
 bool Server::startServer(QHostAddress hostAdd, QString serverPort)

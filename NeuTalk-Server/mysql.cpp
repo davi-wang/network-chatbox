@@ -98,7 +98,7 @@ int MySql::registerUser(QString email, QString nickname, QString password){
     return uid;
 }
 
-bool MySql::login(QString email, QString password){
+bool MySql::login(QString email, QString password, int &uid){
     QString str_select = "SELECT * FROM userstable WHERE email = '"+email+"'";
     if(sqlquery->prepare(str_select)){
         if(sqlquery->exec()){
@@ -108,6 +108,7 @@ bool MySql::login(QString email, QString password){
                     qDebug()<<"denglu successfully !";
                     emit dispalyUserstext("denglu successfully !");
                     //登陆成功，跳转页面
+                    uid = sqlquery->value(0).toInt();
                     flag = 1;
                     return true;
                 }
