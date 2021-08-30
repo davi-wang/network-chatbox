@@ -1,4 +1,6 @@
 #include "mysql.h"
+#include "qdatetime.h"
+
 MySql* MySql::sqlhand = nullptr;
 MySql::MySql(QObject *parent) : QObject(parent)
 {
@@ -184,13 +186,13 @@ QJsonObject MySql::queryFriendlist(int user_uid){
             QJsonArray friend_list;
             while(sqlquery->next()){
                 QJsonObject friend_info;
-                friend_info.insert("uid", QJsonValue(sqlquery->value(0).toString()));
+                friend_info.insert("uid", QJsonValue(sqlquery->value(0).toInt()));
                 friend_info.insert("email", QJsonValue(sqlquery->value(1).toString()));
                 friend_info.insert("nickname", QJsonValue(sqlquery->value(2).toString()));
                 friend_list.append(QJsonValue(friend_info));
             }
             QJsonObject json;
-            json.insert("friend list", QJsonValue(friend_list));
+            json.insert("friend_list", QJsonValue(friend_list));
             return json;
         }
         else{
@@ -280,4 +282,90 @@ void MySql::deleteFriend(int user_uid, int friend_uid){
         qDebug()<<"delete command error !";
         emit dispalyUserstext("delete command error !");
     }
+}
+
+void MySql::createSinglehistorytable(int a_uid, int b_uid){
+    QStringList tablelist = database.tables();
+    sqlquery = new QSqlQuery(database);
+    if(a_uid > b_uid){
+        int temp = a_uid;
+        a_uid = b_uid;
+        b_uid = temp;
+    }
+    if(!tablelist.contains("singlehistorytable"+QString::number(a_uid)+QString::number(b_uid))){
+        QString createusers = "CREATE TABLE singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" (sender_uid int, receiver_uid int, time text, record text not null)";
+        if(sqlquery->prepare(createusers)){
+            if(sqlquery->exec()){
+                qDebug()<<"create singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" OK !";
+                emit dispalyUserstext("create singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" OK !");
+            }
+        }
+        else{
+            qDebug()<<"create table command error !";
+            emit dispalyUserstext("create table command error !");
+        }
+    }
+    else{
+        qDebug()<<"singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" exists !";
+        emit dispalyUserstext("singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" exists !");
+    }
+}
+
+void MySql::insertSinglehistory(int sender_uid, int receiver_uid, QString words, QString datetime){
+    int a_uid, b_uid;
+    if(sender_uid < receiver_uid){
+        a_uid = sender_uid;
+        b_uid = receiver_uid;
+    }
+    else{
+        a_uid = receiver_uid;
+        b_uid = sender_uid;
+    }
+    createSinglehistorytable(a_uid, b_uid);
+    QString insert = "INSERT INTO singlehistorytable" + QString::number(a_uid)+QString::number(b_uid)+"(sender_uid, receiver_uid, time, record) VALUES("+QString::number(sender_uid)+","+QString::number(receiver_uid)+",'"+datetime+"','"+words+"')";
+    if(sqlquery->prepare(insert)){
+        if(sqlquery->exec()){
+            qDebug()<<"insert record successfully !";
+            emit dispalyUserstext("insert record successfully !");
+        }
+    }
+    else{
+        qDebug()<<"insert fail !";
+        emit dispalyUserstext("insert fail !");
+    }
+}
+
+QJsonObject MySql::queryHistorylist(int a_uid, int b_uid){
+    if(a_uid > b_uid){
+        int temp = a_uid;
+        a_uid = b_uid;
+        b_uid = temp;
+    }
+    QString str_select = "SELECT * FROM singlehistorytable"+QString::number(a_uid)+QString::number(b_uid);
+    if(sqlquery->prepare(str_select)){
+        if(sqlquery->exec()){
+            QJsonArray history_list;
+            while(sqlquery->next()){
+                QJsonObject history_info;
+                history_info.insert("sender_uid", QJsonValue(sqlquery->value(0).toString()));
+                history_info.insert("receiver_uid", QJsonValue(sqlquery->value(1).toString()));
+                history_info.insert("datetime", QJsonValue(sqlquery->value(2).toString()));
+                history_info.insert("message",QJsonValue(sqlquery->value(3).toString()));
+                history_list.append(QJsonValue(history_info));
+            }
+            QJsonObject json;
+            json.insert("history_list", QJsonValue(history_list));
+            qDebug()<<"show succeeded !";
+            return json;
+
+        }
+        else{
+            qDebug()<<"wrong here !";
+        }
+    }
+    else{
+        qDebug()<<"wrong user's uid !";
+        emit dispalyUserstext("wrong user's uid !");
+    }
+    return QJsonObject();
 }

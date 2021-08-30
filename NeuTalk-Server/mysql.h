@@ -38,6 +38,9 @@ public:
     void addFriends(int user_uid, int friend_uid);//添加好友
     void deleteFriend(int user_uid, int friend_uid);//删除好友
     bool IsBfriendtoA(int a_uid, int b_uid);//查询B是否为A的好友
+    void createSinglehistorytable(int a_uid, int b_uid);//创建私聊消息记录表
+    void insertSinglehistory(int sender_uid, int receiver_uid, QString words, QString time);//向特定记录表中插入消息记录
+    QJsonObject queryHistorylist(int a_uid, int b_uid);//查询消息记录
 
 signals:
     void dispalyUserstext(const QString &);

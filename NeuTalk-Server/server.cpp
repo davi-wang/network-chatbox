@@ -64,13 +64,18 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
                 "> from client:" << client_connection->peerAddress().toString();
     if (header == Connection::C3_request_message)
     {
-        QJsonValue send_to_uid = data.value("send_to_uid");
-        QString to = send_to_uid.toString();
-        if (onlines.contains(send_to_uid.toInt())) {
-            Connection *send_to = onlines.value(send_to_uid.toInt());
+        QJsonValue send_to_uid = data.value("to_uid");
+        QJsonValue from_uid = data.value("from_uid");
+        QString message = data.value("message").toString();
+        QString datetime = data.value("datetime").toString();
+        int to = send_to_uid.toInt();
+        if (onlines.contains(to)) {
+            Connection *send_to = onlines.value(to);
             send_to->sendMessage(Connection::C4_send_message, data);
         }
         // 存到历史记录数据库
+        MySql *database = MySql::gethand();
+        database->insertSinglehistory(from_uid.toInt(), send_to_uid.toInt(), message, datetime);
     }
     else if (header == Connection::R1_request_email)
     {
@@ -84,15 +89,13 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         QByteArray user_email = data.value("user_email").toString().toUtf8();
         QString username = data.value("username").toString();
         QByteArray password = data.value("password").toString().toUtf8();
-        QByteArray verification_code = data.value("verification code").toString().toUtf8();
+        QByteArray verification_code = data.value("verification_code").toString().toUtf8();
         EmailVerify::VerificationError error;
         error = email_verify.verify(user_email, verification_code);
         if (error == EmailVerify::NoError) {
             MySql* database = MySql::gethand();
             int new_uid = database->registerUser(user_email, username, password);
-            QJsonObject reply;
-            reply.insert("your uid", QJsonValue(new_uid));
-            client_connection->sendMessage(Connection::R6_success, reply);
+            client_connection->sendMessage(Connection::R6_success, QJsonObject());
         }
         else {
             QJsonObject reply;
@@ -109,8 +112,8 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         int your_uid = -1;
         if (database->login(user_email, password, your_uid)) {
             QJsonObject reply;
-            reply.insert("your uid", QJsonValue(your_uid));
-            reply.insert("server uid", QJsonValue(int(0)));
+            reply.insert("your_uid", QJsonValue(your_uid));
+            reply.insert("server_uid", QJsonValue(int(0)));
             client_connection->local_uid = 0;
             client_connection->peer_uid = your_uid;
             client_connection->sendMessage(Connection::L4_success, reply);
@@ -134,10 +137,39 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
 void Server::synchro_friend_list_for(Connection* client_connection)
 {
     // 检查对方是否在线
-
+    if (!onlines.contains(client_connection->peer_uid))
+        return;
     // 发送同步数据包L5
-
+    MySql *database = MySql::gethand();
+    QJsonObject friend_list_json = database->queryFriendlist(client_connection->peer_uid);
+    client_connection->sendMessage(Connection::L5_synchro_data, friend_list_json);
     client_connection->sendMessage(Connection::L6_synchronization_complete, QJsonObject());
+}
+
+// temp
+void parseFriendList(QJsonObject data)
+{
+    QJsonArray list = data.value("friend_list").toArray();
+    for (int i=0; i < list.size(); ++i) {
+        QJsonObject friend_info = list.at(i).toObject();
+        // 下面三行是一个好友
+        int friend_uid = friend_info.value("uid").toInt();
+        QString friend_email = friend_info.value("email").toString();
+        QString friend_name = friend_info.value("nickname").toString();
+        // 上面三个变量就可以存了
+    }
+}
+void parseHistoryList(QJsonObject data)
+{
+    QJsonArray list = data.value("history_list").toArray();
+    for (int i=0; i < list.size(); ++i) {
+        QJsonObject friend_info = list.at(i).toObject();
+        // 下面三行是一条聊天消息
+        int sender_uid = friend_info.value("sender_uid").toInt();
+        int receiver_uid = friend_info.value("receiver_uid").toInt();
+        QString datetime = friend_info.value("datetime").toString();
+        QString message = friend_info.value("message").toString();
+    }
 }
 
 bool Server::startServer(QHostAddress hostAdd, QString serverPort)
