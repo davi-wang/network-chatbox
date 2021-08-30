@@ -24,42 +24,40 @@ void MailSender::sendEmail(const QByteArray &recvaddr,
     this->clientsocket->waitForConnected(1000);
     this->clientsocket->waitForReadyRead(1000);
     recvdata = clientsocket->readAll();
-    qDebug()<<recvdata;
+    qDebug() << "[Email]" +recvdata;
     this->clientsocket->write("HELO smtp.163.com\r\n");
     this->clientsocket->waitForReadyRead(1000);
     recvdata = clientsocket->readAll();
-    qDebug()<<recvdata;
+    qDebug() << "[Email]" +recvdata;
     this->clientsocket->write("AUTH LOGIN\r\n");
     this->clientsocket->waitForReadyRead(1000);
     recvdata = clientsocket->readAll();
-    qDebug()<<recvdata;
-    qDebug()<<"username:"<<username;
+    qDebug() << "[Email]" +recvdata;
     this->clientsocket->write(username.toBase64().append("\r\n"));
     this->clientsocket->waitForReadyRead(1000);
     recvdata = clientsocket->readAll();
-    qDebug()<<recvdata;
-    qDebug()<<"password:"<<password;
+    qDebug() << "[Email]" +recvdata;
     this->clientsocket->write(password.toBase64().append("\r\n"));
     this->clientsocket->waitForReadyRead(1000);
     recvdata = clientsocket->readAll();
-    qDebug()<<recvdata;
+    qDebug() << "[Email]" +recvdata;
     this->clientsocket->write(mailfrom.append(usernametmp.append(">\r\n")));
     this->clientsocket->waitForReadyRead(1000);
     recvdata = clientsocket->readAll();
-    qDebug()<<recvdata;
+    qDebug() << "[Email]" +recvdata;
     //发送邮箱
-    //qDebug()<<"mail from:"<<mailfrom.append(usernametmp.append(">\r\n"));
+    //qDebug() << "[Email]" +"mail from:"<<mailfrom.append(usernametmp.append(">\r\n"));
     this->clientsocket->write(rcptto.append(recvaddrtmp.append(">\r\n")));
     this->clientsocket->waitForReadyRead(1000);
     recvdata = clientsocket->readAll();
-    qDebug()<<recvdata;
+    qDebug() << "[Email]" +recvdata;
     //接收邮箱
-    //qDebug()<<"rcp to:"<<rcptto.append(recvaddrtmp.append(">\r\n"));
+    //qDebug() << "[Email]" +"rcp to:"<<rcptto.append(recvaddrtmp.append(">\r\n"));
     //data表示开始传输数据
     this->clientsocket->write("data\r\n");
     this->clientsocket->waitForReadyRead(1000);
     recvdata = clientsocket->readAll();
-    qDebug()<<recvdata;
+    qDebug() << "[Email]" +recvdata;
     usernametmp = this->username;
     recvaddrtmp = this->recvaddr;
     this->clientsocket->write(prefrom.append(usernametmp.append("\r\n")));
@@ -70,11 +68,11 @@ void MailSender::sendEmail(const QByteArray &recvaddr,
     this->clientsocket->write(".\r\n");
     this->clientsocket->waitForReadyRead(1000);
     recvdata = clientsocket->readAll();
-    qDebug()<<recvdata;
+    qDebug() << "[Email]" +recvdata;
     this->clientsocket->write("quit\r\n");
     this->clientsocket->waitForReadyRead(1000);
     recvdata = clientsocket->readAll();
-    qDebug()<<recvdata;
+    qDebug() << "[Email]" +recvdata;
 
     clientsocket->close();
     delete clientsocket;

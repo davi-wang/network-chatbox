@@ -9,7 +9,7 @@ void EmailVerify::requestVerify(const QByteArray &email)
 {
     QByteArray verification_code = generateCode();
     // 注意 此函数将阻塞式发邮件 可能造成服务端短期无响应
-    sender.sendEmail(email, "[NeuTalk] 您的验证码是" + QString(verification_code), "啊这");
+    sender.sendEmail(email, "[NeuTalk] 您的验证码是" + QString(verification_code), "Sorry.");
     QDateTime now = QDateTime::currentDateTime();
     storage[email] = Node({now, verification_code});
 }

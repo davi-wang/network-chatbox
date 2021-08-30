@@ -34,11 +34,14 @@ void Server::lookedUp(QHostInfo host)
 
 void Server::connectClient(Connection *connection)
 {
+    if (connection == nullptr)
+        qDebug() << "Connection Error!";
     connections.append(connection);
+    qDebug() << connection->socketDescriptor();
 
-    connect(connection, SIGNAL(disconnect()), this, SLOT(closeClient()));
-    connect(connection, SIGNAL(receiveMessage(DataType, const QJsonObject &)),
-            this, SLOT(processMessage(DataType, const QJsonObject &)));
+    connect(connection, SIGNAL(disconnected()), this, SLOT(closeClient()));
+    connect(connection, SIGNAL(receiveMessage(Connection::DataType, const QJsonObject &)),
+            this, SLOT(processMessage(Connection::DataType, const QJsonObject &)));
 
     QString add = connection->peerAddress().toString();
     emit displayText("[INFO] Client " + add + " connected.");
@@ -96,7 +99,7 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         EmailVerify::VerificationError error;
         error = email_verify.verify(user_email, verification_code);
         if (error == EmailVerify::NoError) {
-            emit displayText("[INFO] user:" + QString(user_email) + "has successfully registered an account.")
+            emit displayText("[INFO] user:" + QString(user_email) + "has successfully registered an account.");
             MySql* database = MySql::gethand();
             int new_uid = database->registerUser(user_email, username, password);
             client_connection->sendMessage(Connection::R6_success, QJsonObject());
@@ -136,7 +139,7 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         int from_uid = client_connection->peer_uid;
         int to_uid = data.value("request_uid").toInt();
         emit displayText("[INFO] query chat history between " +
-                         QString::number(from_uid) + " - " + QString::number(to_uid));
+                         QString::number(16988) + " - " + QString::number(to_uid));
         MySql *database = MySql::gethand();
         QJsonObject sync_data = database->queryHistorylist(from_uid, to_uid);
         client_connection->sendMessage(Connection::C2_sychro_history, sync_data);
