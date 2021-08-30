@@ -9,7 +9,7 @@ class MailSender : public QObject
     Q_OBJECT
 
 public:
-    MailSender(QWidget *parent = nullptr);
+    MailSender(QObject *parent = nullptr);
     void sendEmail(const QByteArray &recvaddr, const QString &subject, const QString &content);
     ~MailSender();
 

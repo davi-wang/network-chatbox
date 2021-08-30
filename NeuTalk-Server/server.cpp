@@ -47,7 +47,7 @@ void Server::connectClient(Connection *connection)
 void Server::closeClient()
 {
     if (Connection *connection = qobject_cast<Connection *>(sender())) {
-        // 需要在列表里删除它的指针！这个列表暂时没有用处
+        //
         connection->deleteLater();
         QString add = connection->peerAddress().toString();
         emit displayText("[INFO] Client " + add + " disconnected.");
@@ -56,20 +56,45 @@ void Server::closeClient()
 
 void Server::processMessage(Connection::DataType header, const QJsonObject &data)
 {
-    if (header == Connection::Request_ChatMessage) {
+    Connection* client_connection = qobject_cast<Connection*>(sender());
+    if (header == Connection::C3_request_message) {
         QJsonValue send_to_uid = data.value("send_to_uid");
         QString to = send_to_uid.toString();
         // 检查是否在线
         if (true) {
             // 查一个uid到Connection的映射
             Connection *target=nullptr;
-            target->sendMessage(Connection::Request_ChatMessage, data);
+            target->sendMessage(Connection::C3_request_message, data);
         }
         // 存到历史记录数据库
     }
-    else if (true) {
-        // 其他消息处理
+    else if (header == Connection::R1_request_email) {
+        QByteArray user_email = data.value("user_email").toString().toUtf8();
+        client_connection->sendMessage(Connection::R2_verification_sending, QJsonObject());
+        this->email_verify.requestVerify(user_email);
+        client_connection->sendMessage(Connection::R3_verification_sent, QJsonObject());
     }
+    else if (header == Connection::R4_request_register) {
+        QByteArray user_email = data.value("user_email").toString().toUtf8();
+        QString username = data.value("username").toString();
+        QByteArray password = data.value("password").toString().toUtf8();
+        QByteArray verification_code = data.value("verification code").toString().toUtf8();
+        EmailVerify::VerificationError error;
+        error = email_verify.verify(user_email, verification_code);
+        if (error == EmailVerify::NoError) {
+            MySql* database = MySql::gethand();
+            int new_uid = database->registerUser(user_email, username, password);
+            QJsonObject reply;
+            reply.insert("your uid", QJsonValue(new_uid));
+            client_connection->sendMessage(Connection::R6_success, reply);
+        }
+        else {
+            QJsonObject reply;
+            reply.insert("error", QJsonValue(error));
+            client_connection->sendMessage(Connection::R5_fail, reply);
+        }
+    }
+
 }
 
 bool Server::startServer(QHostAddress hostAdd, QString serverPort)

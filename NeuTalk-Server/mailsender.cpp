@@ -1,6 +1,6 @@
 #include "mailsender.h"
 
-MailSender::MailSender(QWidget *parent)
+MailSender::MailSender(QObject *parent) : QObject(parent)
 {
 }
 
@@ -19,7 +19,7 @@ void MailSender::sendEmail(const QByteArray &recvaddr,
     this->recvaddr = recvaddr;
     QByteArray usernametmp = username;
     QByteArray recvaddrtmp = recvaddr;
-    clientsocket=new QTcpSocket();
+    clientsocket = new QTcpSocket();
     this->clientsocket->connectToHost("smtp.163.com",25,QTcpSocket::ReadWrite);
     this->clientsocket->waitForConnected(1000);
     this->clientsocket->waitForReadyRead(1000);

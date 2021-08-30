@@ -14,13 +14,6 @@
 
 #include <QDebug>
 
-struct client
-{
-    int uid;
-    QString email;
-    QString nickname;
-    QString password;
-};
 
 class MySql : public QObject
 {

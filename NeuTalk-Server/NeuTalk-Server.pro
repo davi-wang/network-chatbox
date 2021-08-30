@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     connection.cpp \
+    emailverify.cpp \
     mailsender.cpp \
     main.cpp \
     mysql.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
 
 HEADERS += \
     connection.h \
+    emailverify.h \
     mailsender.h \
     mysql.h \
     server.h \

@@ -12,7 +12,8 @@
 
 #include "tcpserver.h"
 #include "connection.h"
-#include "mailsender.h"
+#include "emailverify.h"
+#include "mysql.h"
 
 class Server : public QObject
 {
@@ -48,6 +49,8 @@ private:
     QString default_port;
     TcpServer *tcp_server;
     QList<Connection*> connections;
+    EmailVerify email_verify;
+    QMap<int, Connection*> onlines;
 };
 
 #endif // SERVER_H
