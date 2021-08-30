@@ -2,7 +2,7 @@
 #define ADDFRIEND_H
 
 #include <QWidget>
-
+#include"Repeater.h"
 namespace Ui {
 class addfriend;
 }

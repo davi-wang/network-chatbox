@@ -2,7 +2,7 @@
 #define LOGON_H
 
 #include <QWidget>
-
+#include"Repeater.h"
 namespace Ui { class SignIn; }
 
 class SignIn : public QWidget
@@ -21,8 +21,17 @@ private slots:
 
     void on_toolButton_clicked(); //找回密码
 
+    void ShowLoggingProcess();
+    void SignInSuccess();
+    void SignInFail();
+    void
+
+
+
+
 private:
     Ui::SignIn *ui;
+
 };
 
 #endif // LOGON_H

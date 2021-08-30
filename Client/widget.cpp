@@ -94,15 +94,17 @@ void Widget::ReceiveMessagee(Connection::DataType ttype, const QJsonObject &json
     //解析消息
     int friend_uid = json.value("from_uid").toInt();  // 是谁发给我的消息
     QString new_message = json.value("message").toString();  // 聊天内容
-    QString datetime_str = json.value("datetime").toString();  // 什么时候发的，字符串格式
-    QDateTime datetime = QDateTime::fromString(datetime_str, "yyyy-MM-dd hh:mm:ss");  // 什么时候发的
-    bool IfBold = ui->boldTBtn->isChecked();//加粗
-    bool IfUnderline = ui->italicTbtn->isChecked();//倾斜
-    bool IfItalic = ui->underlineTBtn->isChecked();//下划线
-    QFont style=ui->fontCbx->currentFont();//字体
-    QString size= ui->sizeCbx->currentText();//字号
-    QColor color=QColorDialog::getColor(color,ui->colorTBtn);//颜色
-    QString msg=ui->msgtxtEdit->toPlainText().toUtf8();//消息内容
+    QString datetime_str = json.value("datetime").toString();  // 什么时候发的，字符串格式    
+        QDateTime datetime = QDateTime::fromString(datetime_str, "yyyy-MM-dd hh:mm:ss");  // 什么时候发的格式处理
+    bool IfBold=json.value("IfBold").toBool();//加粗
+    bool IfUnderline =json.value("IfUnderline").toBool();//下划线
+    bool IfItalic =json.value("IfItalic").toBool();//倾斜
+    QFont style=json.value("style").toString();//字体
+    QString size=json.value("size").toString();//字号
+    QColor color
+    
+    
+   
 
     //根据消息开始处理
     ui->msgBrowser->setTextColor(Qt::black);
@@ -147,6 +149,8 @@ void Widget::on_sendBtn_clicked()//发送消息
     }
     //判定可以发送消息，然后开始呈现在自己的代码里，然后打包
 
+    
+    
     //呈现在自己的代码里
     connect(ui->sendBtn,&QPushButton::clicked,[=](){
         sndMsg(Msg);
@@ -226,13 +230,14 @@ void Widget::on_sendBtn_clicked()//发送消息
         }
     });
 
-
+ 
 
     //获取所有需要的信息
     bool IfBold = ui->boldTBtn->isChecked();//加粗
     bool IfUnderline = ui->italicTbtn->isChecked();//倾斜
     bool IfItalic = ui->underlineTBtn->isChecked();//下划线
-    QFont style=ui->fontCbx->currentFont();//字体&字号
+    QFont style=ui->fontCbx->currentFont();//字体
+    QString size= ui->sizeCbx->currentText();//字号
     QColor color=QColorDialog::getColor(color,ui->colorTBtn);//颜色
 
     QString msg=ui->msgtxtEdit->toPlainText().toUtf8();//消息内容

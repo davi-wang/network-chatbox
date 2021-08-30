@@ -1,11 +1,11 @@
 #ifndef WIDGET_H
 #define WIDGET_H
-
+#include"Repeater.h"
 #include <QWidget>
 #include <QUdpSocket>
 #include <QLayout>
 #include <connection.h>
-
+#include<QJsonValue>
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE

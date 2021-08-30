@@ -9,13 +9,15 @@
 #include <QSqlDatabase>
 #include <QDebug>
 #include <QSqlQuery>
-
+#include"Repeater.h"
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Connection *server;
+
 //    server->connectToHost(IP,port);//--------------要写的地方-----------
+    QString IP,Port;
+    ClientServer*Repeater=ClientServer::getInstance(IP,Port);
 
     //创建数据库
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");

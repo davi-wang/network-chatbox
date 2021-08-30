@@ -10,13 +10,19 @@ class ClientServer:public QObject
 {
     Q_OBJECT
 public:
-    static ClientServer* getInstance(QString IP,QString Port) {
+    static ClientServer* CreateInstance(QString IP,QString Port) {
             if(instance == nullptr) {
                 instance = new ClientServer( IP, Port);
             }
             return instance;
         }
 
+    static ClientServer* GetInstance() {
+            if(instance == nullptr) {
+                instance = new ClientServer();
+            }
+            return instance;
+        }
     void SendMsg(Connection::DataType header,QJsonObject &data)
     {
         connector->sendMessage(header,data);
@@ -66,6 +72,7 @@ private:
     bool connect_status=false;
     QTcpSocket *tcp;
 
+    QJsonObject Cache;
 private slots:
     void ProcessMsg(Connection::DataType header, QJsonObject Data);
     void Status_detect();
