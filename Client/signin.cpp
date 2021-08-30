@@ -4,7 +4,8 @@
 #include "QSqlQuery"
 #include "QSqlTableModel"
 #include "signon.h"
-#include "list.h"
+#include "login.h"
+#include "connection.h"
 #include "QSettings"
 #include "qdebug.h"
 
@@ -84,7 +85,7 @@ void SignIn::on_SigninBt_clicked() //登录
             qDebug()<<"Already remember the password !";
         }
 t:
-        List *lis = new List(nullptr); //创建新好友列表窗口对象
+        login *lis = new login(nullptr); //创建新好友列表窗口对象
         this->close(); //登录页面关掉
         lis->show(); //好友列表页面打开
     }

@@ -1,9 +1,11 @@
 #include "mainwindow.h"
 
 #include <QApplication>
-#include <list.h>
+#include <login.h>
 #include <signin.h>
 #include <signon.h>
+#include <widget.h>
+#include <connection.h>
 #include <QSqlDatabase>
 #include <QDebug>
 #include <QSqlQuery>
@@ -11,6 +13,9 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    Connection *server;
+//    server->connectToHost(IP,port);//--------------要写的地方-----------
 
     //创建数据库
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
@@ -32,7 +37,7 @@ int main(int argc, char *argv[])
 
 //    MainWindow w; //主页面
 //    w.show();
-//    List list; //好友列表页面
+//    login list; //好友列表页面
 //    list.show();
     SignIn signin; //登录页面
     signin.show();

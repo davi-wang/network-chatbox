@@ -1,4 +1,5 @@
 QT       += core gui sql
+QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,26 +17,33 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    list.cpp \
+    Repeater.cpp \
+    addfriend.cpp \
+    connection.cpp \
+    login.cpp \
     main.cpp \
-    mainwindow.cpp \
     signin.cpp \
     signon.cpp \
-    verification.cpp
+    verification.cpp \
+    widget.cpp
 
 HEADERS += \
-    list.h \
-    mainwindow.h \
+    Repeater.h \
+    addfriend.h \
+    connection.h \
+    login.h \
     signin.h \
     signon.h \
-    verification.h
+    verification.h \
+    widget.h
 
 FORMS += \
-    list.ui \
-    mainwindow.ui \
+    addfriend.ui \
+    login.ui \
     signin.ui \
     signon.ui \
-    verification.ui
+    verification.ui \
+    widget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -43,4 +51,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
+    res.qrc \
     resour.qrc

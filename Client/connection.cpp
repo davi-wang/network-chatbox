@@ -7,16 +7,16 @@ static const int PingInterval = 5 * 1000;
 Connection::Connection(QObject *parent)
     : QTcpSocket(parent)
 {
-    local_uid = "";
-    peer_uid = "";
+    local_uid = -1;
+    peer_uid = -1;
     ping_timer.setInterval(PingInterval);
     current_data_type = Undefined;
 //    transfer_timer_id = 0;
 
     connect(this, SIGNAL(readyRead()), this, SLOT(processReadyRead()));
-    connect(this, SIGNAL(disconnect()), &ping_timer, SLOT(stop()));
+    connect(this, SIGNAL(disconnected()), &ping_timer, SLOT(stop()));
     connect(&ping_timer, SIGNAL(timeout()), this, SLOT(sendPing()));
-    connect(this, SIGNAL(connected()), this, SLOT(connected()));
+    connect(this, SIGNAL(connected()), this, SLOT(connectionUp()));
 
 }
 
@@ -25,8 +25,19 @@ bool Connection::sendMessage(DataType header, const QJsonObject &data)
     QByteArray message;
     QJsonDocument json(data);
     QJsonDocument::JsonFormat format = QJsonDocument::Compact;
-    message = encodeDataTypeToHeader(header) + json.toJson(format);
-    return write(message) == message.size();
+    message = json.toJson(format);
+    // 获取JSON串的字节数，然后将该整型数转为固定8位长度的byte array
+    int json_length = message.size();
+    QByteArray json_size_before_padding = QString::number(json_length).toUtf8();
+    QByteArray padding_digits;
+    for (int t=0; t < 8 - (json_size_before_padding.size()); t++) {
+        padding_digits.append('0');
+    }
+    QByteArray json_size = padding_digits + json_size_before_padding;
+    qDebug() << "json size = " << json_size;
+    // 发送定长9字节消息头，再发送JSON串
+    QByteArray send = encodeDataTypeToHeader(header) + json_size + message;
+    return write(send) == send.size();
 }
 
 void Connection::processReadyRead()
@@ -36,8 +47,15 @@ void Connection::processReadyRead()
         if (!readHeader())
             return;
     }
+    // 读取json_size
+    QByteArray json_size_array = read(8);
+    if (json_size_array.size() != 8)
+        return;
+    int json_size = json_size_array.toInt();
     // 读取并解析Json
-    QByteArray data = readAll();
+    QByteArray data = read(json_size);
+    if (data.size() != json_size)
+        return;
     QJsonParseError json_error;
     QJsonDocument json_doc = QJsonDocument::fromJson(data, &json_error);
     if(json_error.error == QJsonParseError::NoError) {
@@ -60,12 +78,12 @@ void Connection::processReadyRead()
         }
     }
     else {
-        qDebug() << "Json parse error: " << json_error.error;
+        qDebug() << "Json parse error. error type " << json_error.error;
     }
     current_data_type = Undefined;
 }
 
-void Connection::connected()
+void Connection::connectionUp()
 {
     current_data_type = Undefined;
     ping_timer.start();
