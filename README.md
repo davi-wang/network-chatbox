@@ -175,7 +175,7 @@ QByteArray QJsonDocument::toJson(QJsonDocument::JsonFormat format)
 
 5. S>C 前提4，同步数据（用户个人profile+好友列表+群组列表）
 
-   未定义。。。
+   见server.cpp 162行，目前只实现了好友列表
 
 6. S>C 前提5，同步数据完成
 
@@ -195,7 +195,7 @@ QByteArray QJsonDocument::toJson(QJsonDocument::JsonFormat format)
 
 2. S>C 前提1，同步特定对话的历史消息列表
 
-   未定义。。。
+   见server.cpp 174行
 
 3. C>S 前提-，发送聊天消息至某个对话
 

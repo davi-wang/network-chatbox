@@ -60,6 +60,8 @@ void Server::closeClient()
 void Server::processMessage(Connection::DataType header, const QJsonObject &data)
 {
     Connection* client_connection = qobject_cast<Connection*>(sender());
+    emit displayText("[SOCKET] Server received <" + QString::number(header) +
+                     "> from client:" + client_connection->peerAddress().toString());
     qDebug() << "Server received <" << header <<
                 "> from client:" << client_connection->peerAddress().toString();
     if (header == Connection::C3_request_message)
@@ -81,6 +83,7 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
     {
         QByteArray user_email = data.value("user_email").toString().toUtf8();
         client_connection->sendMessage(Connection::R2_verification_sending, QJsonObject());
+        emit displayText("[INFO] Sending verification email to" + QString(user_email));
         this->email_verify.requestVerify(user_email);
         client_connection->sendMessage(Connection::R3_verification_sent, QJsonObject());
     }
@@ -93,11 +96,14 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         EmailVerify::VerificationError error;
         error = email_verify.verify(user_email, verification_code);
         if (error == EmailVerify::NoError) {
+            emit displayText("[INFO] user:" + QString(user_email) + "has successfully registered an account.")
             MySql* database = MySql::gethand();
             int new_uid = database->registerUser(user_email, username, password);
             client_connection->sendMessage(Connection::R6_success, QJsonObject());
+            emit displayText("[INFO] Allocated uid" + QString::number(new_uid) + " to " + user_email);
         }
         else {
+            emit displayText("[INFO] user:" + QString(user_email) + " registration failed.");
             QJsonObject reply;
             reply.insert("error", QJsonValue(error));
             client_connection->sendMessage(Connection::R5_fail, reply);
@@ -111,6 +117,7 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         MySql* database = MySql::gethand();
         int your_uid = -1;
         if (database->login(user_email, password, your_uid)) {
+            emit displayText("[INFO] user:" + user_email + "successfully logged in!");
             QJsonObject reply;
             reply.insert("your_uid", QJsonValue(your_uid));
             reply.insert("server_uid", QJsonValue(int(0)));
@@ -126,11 +133,16 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
     }
     else if (header == Connection::C1_request_chat)
     {
-        // 查询历史消息
-        // 发送同步数据包C2
+        int from_uid = client_connection->peer_uid;
+        int to_uid = data.value("request_uid").toInt();
+        emit displayText("[INFO] query chat history between " +
+                         QString::number(from_uid) + " - " + QString::number(to_uid));
+        MySql *database = MySql::gethand();
+        QJsonObject sync_data = database->queryHistorylist(from_uid, to_uid);
+        client_connection->sendMessage(Connection::C2_sychro_history, sync_data);
     }
     else {
-        qDebug() << "Undefined message received:" << header;
+        emit displayText("[ERROR] Undefined message received:" + QString::number(header));
     }
 }
 
