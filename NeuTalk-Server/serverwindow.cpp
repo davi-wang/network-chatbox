@@ -8,7 +8,7 @@ ServerWindow::ServerWindow(QWidget *parent)
     ui->setupUi(this);
     ui->textEdit->setReadOnly(true);
     ui->textEdit->setFont(QFont("Consolas", 11));
-    ui->textEdit->setTextColor(QColor(105,255,195));
+    ui->textEdit->setTextColor(QColor(0,225,90));
 
     Server* pServer = Server::getInstance();
     MySql* pDatabase = MySql::gethand();
@@ -16,7 +16,6 @@ ServerWindow::ServerWindow(QWidget *parent)
     connect(pServer, SIGNAL(displayText(const QString &)), this, SLOT(displayLine(const QString &)));
     connect(pDatabase, SIGNAL(dispalyUserstext(const QString &)), this, SLOT(displayLine(const QString &)));
 
-    // 默认自动开启服务
     displayLine("[INFO] Initializing database...");
     pDatabase->openDatabase();
     displayLine("[INFO] Starting NeuTalk Server...");

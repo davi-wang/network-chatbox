@@ -18,15 +18,15 @@ bool MySql::openDatabase(){
         database.setPassword("125125");
     }
     if(database.open()){
-        qDebug()<<"database open OK !";
-        emit dispalyUserstext("database open OK !");
+        qDebug() << "[DB] " << "database open OK !";
+        emit dispalyUserstext("[DB]  database open OK !");
         createUserstable();
         createFriendshiptable();
         return true;
     }
     else{
-        qDebug()<<"database open failed !";
-        emit dispalyUserstext("database open failed !");
+        qDebug() << "[DB] " << "database open failed !";
+        emit dispalyUserstext("[DB]  database open failed !");
         return false;
     }
 }
@@ -38,18 +38,18 @@ void MySql::createUserstable(){
         QString createusers = "CREATE TABLE userstable (uid int primary key not null, email text, nickname text, password text)";
         if(sqlquery->prepare(createusers)){
             if(sqlquery->exec()){
-                qDebug()<<"create userstable OK !";
-                emit dispalyUserstext("create userstable OK !");
+                qDebug() << "[DB] " << "create userstable OK !";
+                emit dispalyUserstext("[DB]  create userstable OK !");
             }
         }
         else{
-            qDebug()<<"create table command error !";
-            emit dispalyUserstext("create table command error !");
+            qDebug() << "[DB] " << "create table command error !";
+            emit dispalyUserstext("[DB]  create table command error !");
         }
     }
     else{
-        qDebug()<<"userstable exists !";
-        emit dispalyUserstext("userstable exists !");
+        qDebug() << "[DB] " << "userstable exists !";
+        emit dispalyUserstext("[DB]  userstable exists !");
     }
 }
 
@@ -60,18 +60,18 @@ void MySql::createFriendshiptable(){
         QString createusers = "CREATE TABLE friendshiptable (id INTEGER primary key autoincrement, user_uid int, friend_uid int)";
         if(sqlquery->prepare(createusers)){
             if(sqlquery->exec()){
-                qDebug()<<"create friendshiptable OK !";
-                emit dispalyUserstext("create friendshiptable OK !");
+                qDebug() << "[DB] " << "create friendshiptable OK !";
+                emit dispalyUserstext("[DB]  create friendshiptable OK !");
             }
         }
         else{
-            qDebug()<<"create table command error !";
-            emit dispalyUserstext("create table command error !");
+            qDebug() << "[DB] " << "create table command error !";
+            emit dispalyUserstext("[DB]  create table command error !");
         }
     }
     else{
-        qDebug()<<"friendshiptable exists !";
-        emit dispalyUserstext("friendshiptable exists !");
+        qDebug() << "[DB] " << "friendshiptable exists !";
+        emit dispalyUserstext("[DB]  friendshiptable exists !");
     }
 }
 
@@ -85,17 +85,17 @@ int MySql::registerUser(QString email, QString nickname, QString password){
     QString insert = "INSERT INTO userstable(uid,email,nickname,password) VALUES("+QString::number(uid)+",'"+email+"','"+nickname+"','"+password+"')";
     if(sqlquery->prepare(insert)){
         if(sqlquery->exec()){
-            qDebug()<<"registered successfully !";
-            emit dispalyUserstext("registered successfully !");
+            qDebug() << "[DB] " << "registered successfully !";
+            emit dispalyUserstext("[DB]  registered successfully !");
         }
         else{
-            qDebug()<<"primary key cannot same!";
-            emit dispalyUserstext("primary key cannot same!");
+            qDebug() << "[DB] " << "primary key cannot same!";
+            emit dispalyUserstext("[DB]  primary key cannot same!");
         }
     }
     else{
-        qDebug()<<"registered fail !";
-        emit dispalyUserstext("registered fail !");
+        qDebug() << "[DB] " << "registered fail !";
+        emit dispalyUserstext("[DB]  registered fail !");
     }
     return uid;
 }
@@ -107,27 +107,27 @@ bool MySql::login(QString email, QString password, int &uid){
             int flag = 0;
             while(sqlquery->next()){
                 if(password == sqlquery->value(3).toString()){
-                    qDebug()<<"denglu successfully !";
-                    emit dispalyUserstext("denglu successfully !");
+                    qDebug() << "[DB] " << "denglu successfully !";
+                    emit dispalyUserstext("[DB]  denglu successfully !");
                     //登陆成功，跳转页面
                     uid = sqlquery->value(0).toInt();
                     flag = 1;
                     return true;
                 }
                 else{
-                    qDebug()<<"wrong password !";
-                    emit dispalyUserstext("wrong password !");
+                    qDebug() << "[DB] " << "wrong password !";
+                    emit dispalyUserstext("[DB]  wrong password !");
                     flag = -1;
                 }
             }
             if(flag == 0)
-                qDebug()<<"email does not exist !";
-                emit dispalyUserstext("email does not exist !");
+                qDebug() << "[DB] " << "email does not exist !";
+                emit dispalyUserstext("[DB]  email does not exist !");
         }
     }
     else{
-        qDebug()<<"denglu failed !";
-        emit dispalyUserstext("denglu failed !");
+        qDebug() << "[DB] " << "denglu failed !";
+        emit dispalyUserstext("[DB]  denglu failed !");
     }
     return false;
 }
@@ -138,15 +138,15 @@ bool MySql::queryInfo(QString tableName, QString column, QString info){
     if(sqlquery->prepare(str_select)){
         if(sqlquery->exec()){
             while(sqlquery->next()){
-                qDebug()<<"selected successfully !";
-                emit dispalyUserstext("selected successfully !");
+                qDebug() << "[DB] " << "selected successfully !";
+                emit dispalyUserstext("[DB]  selected successfully !");
                 flag = 1;
             }
         }
     }
     else{
-        qDebug()<<"select command error !";
-        emit dispalyUserstext("select command error !");
+        qDebug() << "[DB] " << "select command error !";
+        emit dispalyUserstext("[DB]  select command error !");
     }
     return flag;
 }
@@ -157,10 +157,10 @@ bool MySql::queryUserInfo(QString email){
     if(sqlquery->prepare(str_select)){
         if(sqlquery->exec()){
             while(sqlquery->next()){
-                qDebug()<<"uid:"<<sqlquery->value(0).toString()
+                qDebug() << "[DB] " << "uid:"<<sqlquery->value(0).toString()
                        <<"email:"<<sqlquery->value(1).toString()
                       <<"nickname:"<<sqlquery->value(2).toString();
-                emit dispalyUserstext("uid:"+sqlquery->value(0).toString()
+                emit dispalyUserstext("[DB]  uid:"+sqlquery->value(0).toString()
                                       +"email:"+sqlquery->value(1).toString()
                                       +"nickname"+sqlquery->value(2).toString());
                 flag = 1;
@@ -168,13 +168,13 @@ bool MySql::queryUserInfo(QString email){
         }
     }
     if(flag){
-        qDebug()<<"selected successfully !";
-        emit dispalyUserstext("selected successfully !");
+        qDebug() << "[DB] " << "selected successfully !";
+        emit dispalyUserstext("[DB]  selected successfully !");
         return true;
     }
     else{
-        qDebug()<<"no one was found !";
-        emit dispalyUserstext("no one was found !");
+        qDebug() << "[DB] " << "no one was found !";
+        emit dispalyUserstext("[DB]  no one was found !");
         return false;
     }
 }
@@ -196,12 +196,12 @@ QJsonObject MySql::queryFriendlist(int user_uid){
             return json;
         }
         else{
-            qDebug()<<"wrong here !";
+            qDebug() << "[DB] " << "wrong here !";
         }
     }
     else{
-        qDebug()<<"wrong user's uid !";
-        emit dispalyUserstext("wrong user's uid !");
+        qDebug() << "[DB] " << "wrong user's uid !";
+        emit dispalyUserstext("[DB]  wrong user's uid !");
     }
     return QJsonObject();
 }
@@ -211,14 +211,14 @@ bool MySql::IsBfriendtoA(int a_uid, int b_uid){
     if(sqlquery->prepare(str_select)){
         if(sqlquery->exec()){
             while(sqlquery->next()){
-                qDebug()<<"B is a friend of A !";
-                emit dispalyUserstext("B is a friend of A !");
+                qDebug() << "[DB] " << "B is a friend of A !";
+                emit dispalyUserstext("[DB]  B is a friend of A !");
                 return true;
             }
         }
     }
-    qDebug()<<"B is not a friend of A !";
-    emit dispalyUserstext("B is not a friend of A !");
+    qDebug() << "[DB] " << "B is not a friend of A !";
+    emit dispalyUserstext("[DB]  B is not a friend of A !");
     return false;
 }
 
@@ -226,13 +226,13 @@ void MySql::dropTable(QString tableName){
     QString str_drop = "DROP TABLE "+tableName;
     if(sqlquery->prepare(str_drop)){
         if(sqlquery->exec()){
-            qDebug()<<"drop table OK !";
-            emit dispalyUserstext("drop table OK !");
+            qDebug() << "[DB] " << "drop table OK !";
+            emit dispalyUserstext("[DB]  drop table OK !");
         }
     }
     else{
-        qDebug()<<"drop command error !";
-        emit dispalyUserstext("drop command error !");
+        qDebug() << "[DB] " << "drop command error !";
+        emit dispalyUserstext("[DB]  drop command error !");
     }
 }
 
@@ -240,13 +240,13 @@ void MySql::deleteData(QString tableName, QString column, QString info){
     QString str_delete = "DELETE FROM "+tableName+" WHERE "+column+" = "+info;
     if(sqlquery->prepare(str_delete)){
         if(sqlquery->exec()){
-            qDebug()<<"delete info OK !";
-            emit dispalyUserstext("delete info OK !");
+            qDebug() << "[DB] " << "delete info OK !";
+            emit dispalyUserstext("[DB]  delete info OK !");
         }
     }
     else{
-        qDebug()<<"delete command error !";
-        emit dispalyUserstext("delete command error !");
+        qDebug() << "[DB] " << "delete command error !";
+        emit dispalyUserstext("[DB]  delete command error !");
     }
 }
 
@@ -255,18 +255,18 @@ void MySql::addFriends(int user_uid, int friend_uid){
         QString insert = "INSERT INTO friendshiptable(user_uid,friend_uid) VALUES("+QString::number(user_uid)+","+QString::number(friend_uid)+")";
         if(sqlquery->prepare(insert)){
             if(sqlquery->exec()){
-                qDebug()<<"addfriend successfully !";
-                emit dispalyUserstext("addfriend successfully !");
+                qDebug() << "[DB] " << "addfriend successfully !";
+                emit dispalyUserstext("[DB]  addfriend successfully !");
             }
         }
         else{
-            qDebug()<<"add fail !";
-            emit dispalyUserstext("add fail !");
+            qDebug() << "[DB] " << "add fail !";
+            emit dispalyUserstext("[DB]  add fail !");
         }
     }
     else{
-        qDebug()<<"B is already a friend of A !";
-        emit dispalyUserstext("B is already a friend of A !");
+        qDebug() << "[DB] " << "B is already a friend of A !";
+        emit dispalyUserstext("[DB]  B is already a friend of A !");
     }
 }
 
@@ -274,13 +274,13 @@ void MySql::deleteFriend(int user_uid, int friend_uid){
     QString str_delete = "DELETE FROM friendshiptable WHERE user_uid = "+QString::number(user_uid)+" AND friend_uid = "+QString::number(friend_uid);
     if(sqlquery->prepare(str_delete)){
         if(sqlquery->exec()){
-            qDebug()<<"delete friend OK !";
-            emit dispalyUserstext("delete friend OK !");
+            qDebug() << "[DB] " << "delete friend OK !";
+            emit dispalyUserstext("[DB]  delete friend OK !");
         }
     }
     else{
-        qDebug()<<"delete command error !";
-        emit dispalyUserstext("delete command error !");
+        qDebug() << "[DB] " << "delete command error !";
+        emit dispalyUserstext("[DB]  delete command error !");
     }
 }
 
@@ -296,18 +296,18 @@ void MySql::createSinglehistorytable(int a_uid, int b_uid){
         QString createusers = "CREATE TABLE singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" (sender_uid int, receiver_uid int, time text, record text not null)";
         if(sqlquery->prepare(createusers)){
             if(sqlquery->exec()){
-                qDebug()<<"create singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" OK !";
-                emit dispalyUserstext("create singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" OK !");
+                qDebug() << "[DB] " << "create singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" OK !";
+                emit dispalyUserstext("[DB]  create singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" OK !");
             }
         }
         else{
-            qDebug()<<"create table command error !";
-            emit dispalyUserstext("create table command error !");
+            qDebug() << "[DB] " << "create table command error !";
+            emit dispalyUserstext("[DB]  create table command error !");
         }
     }
     else{
-        qDebug()<<"singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" exists !";
-        emit dispalyUserstext("singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" exists !");
+        qDebug() << "[DB] " << "singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" exists !";
+        emit dispalyUserstext("[DB]  singlehistorytable"+QString::number(a_uid)+QString::number(b_uid)+" exists !");
     }
 }
 
@@ -325,13 +325,13 @@ void MySql::insertSinglehistory(int sender_uid, int receiver_uid, QString words,
     QString insert = "INSERT INTO singlehistorytable" + QString::number(a_uid)+QString::number(b_uid)+"(sender_uid, receiver_uid, time, record) VALUES("+QString::number(sender_uid)+","+QString::number(receiver_uid)+",'"+datetime+"','"+words+"')";
     if(sqlquery->prepare(insert)){
         if(sqlquery->exec()){
-            qDebug()<<"insert record successfully !";
-            emit dispalyUserstext("insert record successfully !");
+            qDebug() << "[DB] " << "insert record successfully !";
+            emit dispalyUserstext("[DB]  insert record successfully !");
         }
     }
     else{
-        qDebug()<<"insert fail !";
-        emit dispalyUserstext("insert fail !");
+        qDebug() << "[DB] " << "insert fail !";
+        emit dispalyUserstext("[DB]  insert fail !");
     }
 }
 
@@ -355,17 +355,17 @@ QJsonObject MySql::queryHistorylist(int a_uid, int b_uid){
             }
             QJsonObject json;
             json.insert("history_list", QJsonValue(history_list));
-            qDebug()<<"show succeeded !";
+            qDebug() << "[DB] " << "show succeeded !";
             return json;
 
         }
         else{
-            qDebug()<<"wrong here !";
+            qDebug() << "[DB] " << "wrong here !";
         }
     }
     else{
-        qDebug()<<"wrong user's uid !";
-        emit dispalyUserstext("wrong user's uid !");
+        qDebug() << "[DB] " << "wrong user's uid !";
+        emit dispalyUserstext("[DB]  wrong user's uid !");
     }
     return QJsonObject();
 }

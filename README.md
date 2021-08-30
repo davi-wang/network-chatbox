@@ -224,7 +224,38 @@ QByteArray QJsonDocument::toJson(QJsonDocument::JsonFormat format)
    QDateTime datetime = QDateTime::fromString(datetime_str, "yyyy-MM-dd hh:mm:ss");  // 什么时候发的
    ```
 
-   
+
+### 附录-JSON解析函数
+
+``` C++
+// temp
+void parseFriendList(QJsonObject data)
+{
+    QJsonArray list = data.value("friend_list").toArray();
+    for (int i=0; i < list.size(); ++i) {
+        QJsonObject friend_info = list.at(i).toObject();
+        // 下面三行是一个好友
+        int friend_uid = friend_info.value("uid").toInt();
+        QString friend_email = friend_info.value("email").toString();
+        QString friend_name = friend_info.value("nickname").toString();
+        // 上面三个变量就可以存了
+    }
+}
+void parseHistoryList(QJsonObject data)
+{
+    QJsonArray list = data.value("history_list").toArray();
+    for (int i=0; i < list.size(); ++i) {
+        QJsonObject friend_info = list.at(i).toObject();
+        // 下面三行是一条聊天消息
+        int sender_uid = friend_info.value("sender_uid").toInt();
+        int receiver_uid = friend_info.value("receiver_uid").toInt();
+        QString datetime = friend_info.value("datetime").toString();
+        QString message = friend_info.value("message").toString();
+    }
+}
+```
+
+
 
 
 

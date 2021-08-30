@@ -34,23 +34,15 @@ void Server::lookedUp(QHostInfo host)
 
 void Server::connectClient(Connection *connection)
 {
-    if (connection == nullptr)
-        qDebug() << "Connection Error!";
-    connections.append(connection);
-    qDebug() << connection->socketDescriptor();
-
     connect(connection, SIGNAL(disconnected()), this, SLOT(closeClient()));
     connect(connection, SIGNAL(receiveMessage(Connection::DataType, const QJsonObject &)),
             this, SLOT(processMessage(Connection::DataType, const QJsonObject &)));
-
-    QString add = connection->peerAddress().toString();
-    emit displayText("[INFO] Client " + add + " connected.");
+    emit displayText("[INFO] Client " + connection->peerAddress().toString() + " connected.");
 }
 
 void Server::closeClient()
 {
     if (Connection *connection = qobject_cast<Connection *>(sender())) {
-        // 客户端下线处理
         if (onlines.contains(connection->peer_uid)) {
             onlines.remove(connection->peer_uid);
         }
@@ -138,8 +130,9 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
     {
         int from_uid = client_connection->peer_uid;
         int to_uid = data.value("request_uid").toInt();
+        // 同步数据C2
         emit displayText("[INFO] query chat history between " +
-                         QString::number(16988) + " - " + QString::number(to_uid));
+                         QString::number(from_uid) + " - " + QString::number(to_uid));
         MySql *database = MySql::gethand();
         QJsonObject sync_data = database->queryHistorylist(from_uid, to_uid);
         client_connection->sendMessage(Connection::C2_sychro_history, sync_data);
@@ -151,7 +144,6 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
 
 void Server::synchro_friend_list_for(Connection* client_connection)
 {
-    // 检查对方是否在线
     if (!onlines.contains(client_connection->peer_uid))
         return;
     // 发送同步数据包L5
@@ -159,32 +151,6 @@ void Server::synchro_friend_list_for(Connection* client_connection)
     QJsonObject friend_list_json = database->queryFriendlist(client_connection->peer_uid);
     client_connection->sendMessage(Connection::L5_synchro_data, friend_list_json);
     client_connection->sendMessage(Connection::L6_synchronization_complete, QJsonObject());
-}
-
-// temp
-void parseFriendList(QJsonObject data)
-{
-    QJsonArray list = data.value("friend_list").toArray();
-    for (int i=0; i < list.size(); ++i) {
-        QJsonObject friend_info = list.at(i).toObject();
-        // 下面三行是一个好友
-        int friend_uid = friend_info.value("uid").toInt();
-        QString friend_email = friend_info.value("email").toString();
-        QString friend_name = friend_info.value("nickname").toString();
-        // 上面三个变量就可以存了
-    }
-}
-void parseHistoryList(QJsonObject data)
-{
-    QJsonArray list = data.value("history_list").toArray();
-    for (int i=0; i < list.size(); ++i) {
-        QJsonObject friend_info = list.at(i).toObject();
-        // 下面三行是一条聊天消息
-        int sender_uid = friend_info.value("sender_uid").toInt();
-        int receiver_uid = friend_info.value("receiver_uid").toInt();
-        QString datetime = friend_info.value("datetime").toString();
-        QString message = friend_info.value("message").toString();
-    }
 }
 
 bool Server::startServer(QHostAddress hostAdd, QString serverPort)
@@ -196,7 +162,6 @@ bool Server::startServer(QHostAddress hostAdd, QString serverPort)
     if (tcp_server->listen(hostAdd, serverPort.toUInt())) {
         connect(tcp_server, SIGNAL(newConnection(Connection *)),
                 this, SLOT(connectClient(Connection *)));
-        emit serverIsUp();
         emit displayText("[INFO] Server is up. Listening for new connections.");
         emit displayText("[INFO] Server host ip: " + hostAdd.toString());
         emit displayText("[INFO] Server port: " + serverPort);

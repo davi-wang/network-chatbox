@@ -29,18 +29,15 @@ public:
     // 根据指定的主机ip和端口号开启TcpServer
     bool startServer(QHostAddress hostadd, QString serverPort);
     void stopServer();
-    void getHostInfo();
+    void getHostInfo();  // 获取主机网络信息，然后自动开启服务器
 
 signals:
-    // 传给ui窗口的信号
-    void serverIsUp();
     void displayText(const QString &);
-    //
     void synchro_friend_list(Connection*);
 
 private slots:
-    void lookedUp(QHostInfo host);
-    void connectClient(Connection *connection);  // 被TcpServer的信号触发 处理新连接
+    void lookedUp(QHostInfo);
+    void connectClient(Connection *);  // 被TcpServer的信号触发 处理新连接
     void closeClient();  // 被Socket的信号触发，关闭连接
     void processMessage(Connection::DataType, const QJsonObject &);  // 被Connection的信号触发，处理报文
     void synchro_friend_list_for(Connection*);

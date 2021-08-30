@@ -2,6 +2,7 @@
 
 EmailVerify::EmailVerify()
 {
+    srand(time(nullptr));
     verification_code_length = 6;
 }
 
@@ -31,7 +32,6 @@ EmailVerify::VerificationError EmailVerify::verify(const QByteArray &email, cons
 
 QByteArray EmailVerify::generateCode()
 {
-    srand(time(nullptr));
     QByteArray code;
     for (size_t i = 0; i < verification_code_length; i++) {
         int digit = rand() % 10;
