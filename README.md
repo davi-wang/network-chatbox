@@ -55,12 +55,6 @@ bool QJsonObject::contains(const QString &key) const
 
 查一个键是不是在里面，不在里面就拿不到值
 
-```C++
-QStringList QJsonObject::keys() const
-```
-
-查一个对象里的所有键，返回一个列表
-
 ### QJsonValue 类
 
 一个值可能有6种数据类型 bool, double, string, object, array, null
@@ -77,7 +71,7 @@ QJsonValue::Type type()
 
 检查类型之后，可以使用.toString()，.toObject()函数，把这个QJsonValue转化成对应的数据
 
-### QJsonDocument 类
+### QJsonDocument 类 这部分只有Connection内部需要
 
 帮助我们传输的
 
@@ -102,24 +96,90 @@ QByteArray QJsonDocument::toJson(QJsonDocument::JsonFormat format)
 #### 每个标号代表一个报文类型！
 
 1. C>S 请求注册，账号邮箱，请求发送验证邮件
+
+   :star:客户端的写入```json.insert("user_email", QJsonValue(email));```
+
 2. S>C 前提1，请求已收到，正在发送
+
+   JSON内容为空
+
 3. S>C 前提2，发送验证邮件成功，记录该邮箱+验证码对应的datetime
+
+   JSON内容为空
+
 4. C>S 前提-，请求注册，包含邮箱+验证码+密码散列值
+
+   :star:客户端的写入
+
+   ``` C++
+   QJsonObject json;
+   json.insert("user_email", QJsonValue(email)); // 邮箱字符串，保证纯ASCII
+   json.insert("username", QJsonValue(username));  // 用户昵称
+   json.insert("password", QJsonValue(password));  // 密码，
+   json.insert("verification_code", QJsonValue(password));
+   ```
+
 5. S>C 前提4，注册失败，返回失败原因
+
+   :star:客户端的读取 ```json.value("error").toString();```
+
 6. S>C 前提4，注册成功，服务器返回账户uid
 
+   无
 
+   ``` C++
+   
+   ```
+
+   
 
 ## 登录流程
 
 #### 每个标号代表一个报文类型！
 
 1. C>S 请求登录，提交邮箱/uid+密码散列值
+
+   :star:客户端的写入
+
+   ```C++
+   json.insert("user_email", QJsonValue(email));
+       QCryptographicHash hash(QCryptographicHash::Md5);  // md5散列
+       QByteArray byte_array;
+       byte_array.append(password);
+       hash.addData(byte_array);
+       QByteArray result_byte_array = hash.result();  //返回最终的哈希值
+       QString md5PassWord = result_byte_array.toHex();  // 转为QString类型填入JSON
+   json.insert("password", QJsonValue(password));
+   ```
+
+   
+
 2. S>C 前提1，服务器已收到登录请求，等待进一步接收消息
-3. S>C 前提1，登录失败，返回失败原因
+
+   JSON内容为空
+
+3. S>C 前提1，登录失败，**邮箱不存在或者密码错误**
+
+   JSON内容为空
+
 4. S>C 前提1，登录成功，等待同步数据
+
+   :star:客户端的读取
+
+   ``` C++
+   connection->local_uid = json.value("your_uid").toInt();  // 把uid记录到connection对象里
+   connection->peer_uid = json.value("server_uid").toInt();
+   ```
+
+   
+
 5. S>C 前提4，同步数据（用户个人profile+好友列表+群组列表）
+
+   未定义。。。
+
 6. S>C 前提5，同步数据完成
+
+   JSON内容为空
 
 
 
@@ -131,13 +191,40 @@ QByteArray QJsonDocument::toJson(QJsonDocument::JsonFormat format)
 
 1. C>S 打开对话，请求同步历史消息
 
+   :star:客户端的写入 ```json.insert("request_uid", QJsonValue(int(uid)));```
+
 2. S>C 前提1，同步特定对话的历史消息列表
 
+   未定义。。。
+
 3. C>S 前提-，发送聊天消息至某个对话
+
+   :star:客户端的写入
+
+   ```C++
+   QDateTime now;
+   json.insert("from_uid", QJsonValue(connection->local_uid));
+   json.insert("to_uid", QJsonValue(friend_uid)); // 填好友的uid
+   json.insert("datetime", QJsonValue(now.currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+   json.insert("message", QJsonValue(message));  // 填发送的聊天消息
+   ```
+
+   
 
    服务端检查发送者和对话的有效性，然后将聊天消息转发至对话中的其他用户，最后将它保存到服务端数据库
 
 4. S>C 前提-，用户接收到聊天消息
+
+   :star:客户端的读取
+
+   ``` C++
+   int friend_uid = json.value("from_uid").toInt();  // 是谁发给我的消息
+   QString new_message = json.value("message").toString();  // 聊天内容
+   QString datetime_str = json.value("datetime").toString();  // 什么时候发的，字符串格式
+   QDateTime datetime = QDateTime::fromString(datetime_str, "yyyy-MM-dd hh:mm:ss");  // 什么时候发的
+   ```
+
+   
 
 
 
