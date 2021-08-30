@@ -53,10 +53,10 @@ public:
 
 signals:
     // 接受报文的信号，连接并触发上层槽函数
-    void receiveMessage(Connection::DataType, const QJsonObject &);
+    void receiveMessage(DataType header, const QJsonObject &data);
 
 private slots:
-    void connectionUp();
+    void connected();
     void processReadyRead();
     void sendPing();
     void sendPong();
