@@ -1,6 +1,5 @@
 #include "connection.h"
 
-//static const int TransferTimeout = 30 * 1000;
 static const int PongTimeout = 60 * 1000;
 static const int PingInterval = 5 * 1000;
 
@@ -11,22 +10,18 @@ Connection::Connection(QObject *parent)
     peer_uid = -1;
     ping_timer.setInterval(PingInterval);
     current_data_type = Undefined;
-//    transfer_timer_id = 0;
 
     connect(this, SIGNAL(readyRead()), this, SLOT(processReadyRead()));
     connect(this, SIGNAL(disconnected()), &ping_timer, SLOT(stop()));
     connect(&ping_timer, SIGNAL(timeout()), this, SLOT(sendPing()));
     connect(this, SIGNAL(connected()), this, SLOT(connectionUp()));
-
 }
 
 bool Connection::sendMessage(DataType header, const QJsonObject &data)
 {
-    QByteArray message;
     QJsonDocument json(data);
     QJsonDocument::JsonFormat format = QJsonDocument::Compact;
-    message = json.toJson(format);
-    // 获取JSON串的字节数，然后将该整型数转为固定8位长度的byte array
+    QByteArray message = json.toJson(format);
     int json_length = message.size();
     QByteArray json_size_before_padding = QString::number(json_length).toUtf8();
     QByteArray padding_digits;
@@ -70,15 +65,13 @@ void Connection::processReadyRead()
             pong_time.restart();
             break;
         // -----以下部分可扩展报文类型 自定义Connection层的处理-----
-		// 
-        // -----------------------------------------------------
         default:
             emit receiveMessage(current_data_type, json);
             break;
         }
     }
     else {
-        qDebug() << "Json parse error. error type " << json_error.error;
+        qDebug() << "Json parse error! error type " << json_error.error;
     }
     current_data_type = Undefined;
 }
@@ -92,7 +85,7 @@ void Connection::connectionUp()
 
 void Connection::sendPing()
 {
-    // 附加功能，ping超过某一个时长没收到响应pong，则立即终止连接
+    // ping超过某一个时长没收到响应pong，则强制终止连接
     if (pong_time.elapsed() > PongTimeout) {
         abort();
         qDebug() << "Connection is aborted for ping timeout.";
@@ -117,7 +110,8 @@ QByteArray Connection::encodeDataTypeToHeader(DataType type)
 bool Connection::readHeader()
 {
     char c = read(1).at(0);
-    if (c < '!') return false;  // 待增加上限检查
+    if (c < '!') return false;
+    if (c > ';') return false;
     current_data_type = DataType(int(c) - int('!'));
     return true;
 }

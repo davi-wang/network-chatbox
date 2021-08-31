@@ -3,7 +3,7 @@
 
 #include <QWidget>
 //#include<QPainter>
-#include"Repeater.h"
+
 
 namespace Ui {
 class login;
@@ -16,10 +16,6 @@ class login : public QWidget
 public:
     explicit login(QWidget *parent = nullptr);
     ~login();
-
-private slots:
-
-//    void on_pushButton_windowIconTextChanged(const QString &iconText);
 
 private:
     Ui::login *ui;

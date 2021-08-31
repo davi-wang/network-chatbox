@@ -18,7 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     Repeater.cpp \
-    addfriend.cpp \
+    buildconnect.cpp \
     connection.cpp \
     login.cpp \
     main.cpp \
@@ -28,8 +28,9 @@ SOURCES += \
     widget.cpp
 
 HEADERS += \
+    DataTypes.h \
     Repeater.h \
-    addfriend.h \
+    buildconnect.h \
     connection.h \
     login.h \
     signin.h \
@@ -38,7 +39,7 @@ HEADERS += \
     widget.h
 
 FORMS += \
-    addfriend.ui \
+    buildconnect.ui \
     login.ui \
     signin.ui \
     signon.ui \

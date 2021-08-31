@@ -2,11 +2,12 @@
 #define VERIFICATION_H
 
 #include <QWidget>
+#include "Repeater.h"
 #include "QMessageBox"
-#include"Repeater.h"
-namespace Ui {
-class Verification;
-}
+#include "QJsonObject"
+#include "QJsonValue"
+
+namespace Ui { class Verification; }
 
 class Verification : public QWidget
 {
@@ -17,10 +18,16 @@ public:
     ~Verification();
 
 private slots:
-    void on_OKBt_clicked();
+    void on_OKBt_clicked(); //点击OK
+
+    //与Repeater响应
+    //自己的槽函数 /接收信号
+    void SignOnFail(); //注册失败，返回失败原因
+    void SignOnSuccess(); //注册成功，服务器返回账户uid
 
 private:
     Ui::Verification *ui;
+    ClientServer * Repeater = ClientServer::GetInstance();
 };
 
 #endif // VERIFICATION_H
