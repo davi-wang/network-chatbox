@@ -48,6 +48,8 @@ private:
     explicit Server(QObject *parent = nullptr);
     static Server* instance;
 
+    bool display_socket_debug;
+    bool display_json_sent_debug;
     QString default_port;
     TcpServer *tcp_server;
 //    QList<Connection*> connections;

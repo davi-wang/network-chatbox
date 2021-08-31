@@ -44,12 +44,13 @@
     <addaction name="actionopen"/>
     <addaction name="actionclose"/>
     <addaction name="separator"/>
-    <addaction name="actioninfo"/>
+    <addaction name="actiononlines"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
      <string>Network</string>
     </property>
+    <addaction name="actioninfo"/>
     <addaction name="actionset_IP_address"/>
     <addaction name="actionPort"/>
    </widget>
@@ -61,23 +62,31 @@
     <addaction name="actionZoom_out"/>
     <addaction name="actionblank_line"/>
    </widget>
+   <widget class="QMenu" name="menuDebug">
+    <property name="title">
+     <string>Debug</string>
+    </property>
+    <addaction name="actionSocket_Receive"/>
+    <addaction name="actionJSON_SENT"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
    <addaction name="menuAppearence"/>
+   <addaction name="menuDebug"/>
   </widget>
   <action name="actionopen">
    <property name="text">
-    <string>open</string>
+    <string>Turn On Server</string>
    </property>
   </action>
   <action name="actionclose">
    <property name="text">
-    <string>close</string>
+    <string>Turn Off Server</string>
    </property>
   </action>
   <action name="actioninfo">
    <property name="text">
-    <string>info</string>
+    <string>Network Info</string>
    </property>
   </action>
   <action name="actionset_IP_address">
@@ -102,7 +111,22 @@
   </action>
   <action name="actionblank_line">
    <property name="text">
-    <string>blank line</string>
+    <string>Blank Line</string>
+   </property>
+  </action>
+  <action name="actiononlines">
+   <property name="text">
+    <string>Online Users</string>
+   </property>
+  </action>
+  <action name="actionSocket_Receive">
+   <property name="text">
+    <string>Socket Receive</string>
+   </property>
+  </action>
+  <action name="actionJSON_SENT">
+   <property name="text">
+    <string>JSON SENT</string>
    </property>
   </action>
  </widget>

@@ -63,3 +63,51 @@ void ServerWindow::on_actionblank_line_triggered()
     ui->textEdit->append(" - ");
     ui->textEdit->append(" - ");
 }
+
+void ServerWindow::on_actioninfo_triggered()
+{
+    Server* pServer = Server::getInstance();
+    displayLine("[INFO] Server IP: " + pServer->hostadd_list.at(2).toString());
+    displayLine("[INFO] Server Port: " + pServer->default_port);
+}
+
+void ServerWindow::on_actiononlines_triggered()
+{
+    Server* pServer = Server::getInstance();
+    MySql* database = MySql::gethand();
+    qDebug() << pServer->onlines;
+    QList<int> onlines_uid = pServer->onlines.keys();
+    qDebug() << "mapsize" << pServer->onlines.size();
+    displayLine("[INFO] All logged in clients:");
+    displayLine("[INFO] ---------uid-----email------------name--");
+    for (const int &uid: onlines_uid) {
+        QString name = database->queryUser(uid).value("nickname").toString();
+        displayLine("[INFO] Online: " + QString::number(uid) + " - " +
+                    pServer->onlines[uid]->peerAddress().toString() + " - " + name);
+    }
+    displayLine("[INFO] ------------------------------------------");
+}
+
+void ServerWindow::on_actionSocket_Receive_triggered()
+{
+    Server* pServer = Server::getInstance();
+    pServer->display_socket_debug = !(pServer->display_socket_debug);
+    if (pServer->display_socket_debug) {
+        displayLine("[SETTINGS] Now display all DataType received from sockets.");
+    }
+    else {
+        displayLine("[SETTINGS] Now hide all DataType received from sockets.");
+    }
+}
+
+void ServerWindow::on_actionJSON_SENT_triggered()
+{
+    Server* pServer = Server::getInstance();
+    pServer->display_json_sent_debug = !(pServer->display_json_sent_debug);
+    if (pServer->display_json_sent_debug) {
+        displayLine("[SETTINGS] Now display some json data sent.");
+    }
+    else {
+        displayLine("[SETTINGS] Now hide some json data sent.");
+    }
+}

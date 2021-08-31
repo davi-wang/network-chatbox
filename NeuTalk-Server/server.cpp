@@ -6,6 +6,8 @@ Server::Server(QObject *parent) : QObject(parent)
 {
     tcp_server = nullptr;
     default_port = "14400";
+    display_socket_debug = false;
+    display_json_sent_debug = true;
 }
 
 void Server::getHostInfo()
@@ -56,10 +58,12 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
 {
     MySql *database = MySql::gethand();
     Connection* client_connection = qobject_cast<Connection*>(sender());
-    emit displayText("[SOCKET] Server received <" + QString::number(header) +
-                     "> from client:" + client_connection->peerAddress().toString());
-    qDebug() << "Server received <" << header <<
-                "> from client:" << client_connection->peerAddress().toString();
+    if (display_socket_debug) {
+        emit displayText("[SOCKET] Server received <" + QString::number(header) +
+                         "> from client:" + client_connection->peerAddress().toString());
+        qDebug() << "Server received <" << header <<
+                    "> from client:" << client_connection->peerAddress().toString();
+    }
     if (header == Connection::C3_request_message)
     {
         QJsonValue send_to_uid = data.value("to_uid");
@@ -77,7 +81,7 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
     {
         QByteArray user_email = data.value("user_email").toString().toUtf8();
         client_connection->sendMessage(Connection::R2_verification_sending, QJsonObject());
-        emit displayText("[INFO] Sending verification email to" + QString(user_email));
+        emit displayText("[INFO] Sending verification email to " + QString(user_email));
         this->email_verify.requestVerify(user_email);
         client_connection->sendMessage(Connection::R3_verification_sent, QJsonObject());
     }
@@ -89,22 +93,23 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         QByteArray verification_code = data.value("verification_code").toString().toUtf8();
         EmailVerify::VerificationError error;
         error = email_verify.verify(user_email, verification_code);
+        qDebug() << error;
         if (error == EmailVerify::NoError) {
             if (!database->queryUserInfo(user_email).empty()) {
-                emit displayText("[INFO] user:" + QString(user_email) + "has successfully registered an account.");
+                emit displayText("[INFO] user: \"" + QString(user_email) + "\" has successfully registered an account.");
                 int new_uid = database->registerUser(user_email, username, password);
                 client_connection->sendMessage(Connection::R6_success, QJsonObject());
                 emit displayText("[INFO] Allocated uid" + QString::number(new_uid) + " to " + user_email);
             }
             else {
-                emit displayText("[INFO] user:" + QString(user_email) + " registration failed.");
+                emit displayText("[INFO] user:" + QString(user_email) + " registration failed. -1");
                 QJsonObject reply;
                 reply.insert("error", QJsonValue("-1"));
                 client_connection->sendMessage(Connection::R5_fail, reply);
             }
         }
         else {
-            emit displayText("[INFO] user:" + QString(user_email) + " registration failed.");
+            emit displayText("[INFO] user:" + QString(user_email) + " registration failed. " + int(error));
             QJsonObject reply;
             reply.insert("error", QJsonValue(error));
             client_connection->sendMessage(Connection::R5_fail, reply);
@@ -114,10 +119,10 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
     {
         QByteArray user_email = data.value("user_email").toString().toUtf8();
         QByteArray password = data.value("password").toString().toUtf8();
-        client_connection->sendMessage(Connection::L2_logging, QJsonObject());
+//        client_connection->sendMessage(Connection::L2_logging, QJsonObject());
         int your_uid = -1;
         if (database->login(user_email, password, your_uid)) {
-            emit displayText("[INFO] user:" + user_email + "successfully logged in!");
+            emit displayText("[INFO] user: \"" + user_email + "\" successfully logged in!");
             QJsonObject reply;
             reply.insert("your_uid", QJsonValue(your_uid));
             reply.insert("server_uid", QJsonValue(int(0)));
@@ -145,6 +150,8 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
     {
         QJsonObject matched_users = database->queryUserInfo(data.value("search").toString());
         client_connection->sendMessage(Connection::F2_return_users, matched_users);
+        QJsonDocument doc(matched_users);
+        displayText("[SEND JSON] " + doc.toJson());
     }
     else if (header == Connection::F3_request_add_friend)
     {

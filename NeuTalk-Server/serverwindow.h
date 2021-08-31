@@ -31,6 +31,14 @@ private slots:
 
     void on_actionblank_line_triggered();
 
+    void on_actioninfo_triggered();
+
+    void on_actiononlines_triggered();
+
+    void on_actionSocket_Receive_triggered();
+
+    void on_actionJSON_SENT_triggered();
+
 private:
     Ui::ServerWindow *ui;
     int font_size;
