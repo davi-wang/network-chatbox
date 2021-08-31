@@ -3,7 +3,6 @@
 #include <QIcon>
 #include <QToolButton>
 #include "widget.h"
-#include "connection.h"
 #include <QMessageBox>
 
 //void login::paintEvent(QPaintEvent *event)
@@ -75,7 +74,7 @@ login::login(QWidget *parent) :
             Widget *widget=new Widget(nullptr,vector[i]->text());
             widget->setWindowIcon(vector[i]->icon());
             widget->setWindowTitle(vector[i]->text());
-            widget->show();         
+            widget->show();
 
             connect(widget,&Widget::closeWidget,this,[=]()//关闭时重置isshow函数
             {

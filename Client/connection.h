@@ -19,7 +19,7 @@ class Connection : public QTcpSocket
 public:
     Connection(QObject *parent = nullptr);
 
-    // 定义数据包的内容类型，作为报文头
+    // 定义数据包的内容类型，作为报文头(header)
     enum DataType {
         Undefined,
         Ping,
@@ -40,11 +40,15 @@ public:
         C2_sychro_history,
         C3_request_message,
         C4_send_message,
-
+        F1_search_user,
+        F2_return_users,
+        F3_request_add_friend,
+        F4_new_friend,
+        F5_request_user_info
         // ...
     };
 
-    // 双方的唯一标识符，由服务器一次性分配，初始化为空（代表未登录）
+    // 双方的唯一标识符，由服务器一次性分配，未分配时为-1
     int local_uid;
     int peer_uid;
 
@@ -68,7 +72,6 @@ private:
     QTimer ping_timer;
     QTime pong_time;
     DataType current_data_type;
-//    int transfer_timer_id;
 };
 
 #endif // CONNECTION_H

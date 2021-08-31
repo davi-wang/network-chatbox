@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SignIn</class>
- <widget class="QWidget" name="SignIn">
+ <class>BuildConnect</class>
+ <widget class="QWidget" name="BuildConnect">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -38,7 +38,7 @@
      <x>30</x>
      <y>50</y>
      <width>431</width>
-     <height>281</height>
+     <height>271</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -53,60 +53,12 @@
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <widget class="QCheckBox" name="checkBox">
+   <widget class="QPushButton" name="Build">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>150</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QCheckBox{
-	background-color: rgb(85,17,255,0);
-	color:white;
-	font-size:16px;
-}</string>
-    </property>
-    <property name="text">
-     <string>Remember me</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="SignonBt">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>210</y>
-      <width>181</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton{
-	background:#069cfa;
-	color:#fff;
-	border-radius:15px;
-	font: 87 11pt &quot;Arial Black&quot;;
-}
-
-QPushButton:pressed{
-background-color:rgb(85, 255, 127);
-border-style:inset;
-}
-
-font: 87 11pt &quot;Arial Black&quot;;</string>
-    </property>
-    <property name="text">
-     <string>Sign On</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="SigninBt">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>210</y>
-      <width>181</width>
+      <y>180</y>
+      <width>371</width>
       <height>41</height>
      </rect>
     </property>
@@ -125,14 +77,14 @@ border-style:inset;
 </string>
     </property>
     <property name="text">
-     <string>Sign In</string>
+     <string>Build</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="pswdEdit">
+   <widget class="QLineEdit" name="IPEdit">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>90</y>
+      <y>50</y>
       <width>371</width>
       <height>31</height>
      </rect>
@@ -147,49 +99,23 @@ border-style:inset;
 }</string>
     </property>
     <property name="echoMode">
-     <enum>QLineEdit::Password</enum>
+     <enum>QLineEdit::Normal</enum>
     </property>
     <property name="placeholderText">
-     <string>PassWord</string>
+     <string> IP</string>
     </property>
    </widget>
-   <widget class="QToolButton" name="toolButton">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>150</y>
-      <width>151</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QToolButton{
-	background-color: rgb(85,17,255,0);
-	color:rgb(224, 227, 234);
-	font-style:italic bold;
-	font-size:16px;
-}
-
-QToolButton:pressed{
-	background-color:rgb(255, 98, 98);
-	border-style:inset;
-}</string>
-    </property>
-    <property name="text">
-     <string>Forget Password</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="userEdit">
+   <widget class="QLineEdit" name="PORTEdit">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>30</y>
+      <y>110</y>
       <width>371</width>
       <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QComboBox{
+     <string notr="true">QLineEdit{
 	color:rgb(25, 37, 44);
 	background-color:rgb(245, 245, 245);
 	font-size:16px;
@@ -197,19 +123,13 @@ QToolButton:pressed{
 	border-radius:5px;
 }</string>
     </property>
-    <property name="editable">
-     <bool>true</bool>
+    <property name="echoMode">
+     <enum>QLineEdit::Normal</enum>
     </property>
-    <property name="currentText">
-     <string>Email</string>
+    <property name="placeholderText">
+     <string> Port</string>
     </property>
    </widget>
-   <zorder>checkBox</zorder>
-   <zorder>SignonBt</zorder>
-   <zorder>pswdEdit</zorder>
-   <zorder>toolButton</zorder>
-   <zorder>SigninBt</zorder>
-   <zorder>userEdit</zorder>
   </widget>
  </widget>
  <resources/>
