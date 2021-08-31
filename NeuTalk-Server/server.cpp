@@ -71,7 +71,6 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
             Connection *send_to = onlines.value(to);
             send_to->sendMessage(Connection::C4_send_message, data);
         }
-        // 存到历史记录数据库
         database->insertSinglehistory(from_uid.toInt(), send_to_uid.toInt(), message, datetime);
     }
     else if (header == Connection::R1_request_email)
@@ -153,7 +152,8 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         if (database->addFriends(client_connection->peer_uid, friend_uid)) {
             QDateTime now = QDateTime::currentDateTime();
             database->insertSinglehistory(client_connection->peer_uid, friend_uid,
-                                          "Greetings! We are friends now.", now.toString("yyyy-MM-dd hh:mm:ss"));
+                                          "Greetings! We are friends now.",
+                                          now.toString("yyyy-MM-dd hh:mm:ss"));
             QJsonObject reply, tell;
             reply.insert("new_friend_uid", QJsonValue(int(friend_uid)));
             tell.insert("new_friend_uid", QJsonValue(int(client_connection->peer_uid)));
@@ -191,13 +191,13 @@ bool Server::startServer()
         delete tcp_server;
     }
     tcp_server = new TcpServer();
-    qDebug() << hostadd_list.at(0);
-    if (tcp_server->listen(hostadd_list.at(0), default_port.toUInt())) {
+    qDebug() << hostadd_list.at(2);
+    if (tcp_server->listen(hostadd_list.at(2), default_port.toUInt())) {
         qDebug() << "listen";
         connect(tcp_server, SIGNAL(newConnection(Connection *)),
                 this, SLOT(connectClient(Connection *)));
         emit displayText("[INFO] Server is up. Listening for new connections.");
-        emit displayText("[INFO] Server host ip: " + hostadd_list.at(0).toString());
+        emit displayText("[INFO] Server host ip: " + hostadd_list.at(2).toString());
         emit displayText("[INFO] Server port: " + default_port);
         return true;
     }

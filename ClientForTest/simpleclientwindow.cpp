@@ -34,7 +34,7 @@ void SimpleClientWindow::process(Connection::DataType header, const QJsonObject 
 
 void SimpleClientWindow::on_pushButton_1_clicked()
 {
-    connection->connectToHost("192.168.174.1", 14400);
+    connection->connectToHost("10.179.166.249", 14400);
 }
 
 void SimpleClientWindow::on_pushButton_2_clicked()
@@ -79,4 +79,11 @@ void SimpleClientWindow::on_pushButton_6_clicked()
     QJsonObject json;
     json.insert("request_uid", QJsonValue(int(0)));
     connection->sendMessage(Connection::C1_request_chat, json);
+}
+
+void SimpleClientWindow::on_pushButton_7_clicked()
+{
+    QJsonObject json;
+    json.insert("uid", QJsonValue(16739));
+    connection->sendMessage(Connection::F2_request_add_friend, json);
 }

@@ -40,9 +40,11 @@ public:
         C2_sychro_history,
         C3_request_message,
         C4_send_message,
-        F1_lookup_user,
-        F2_request_add_friend,
-        F3_request_user_info
+        F1_search_user,
+        F2_return_users,
+        F3_request_add_friend,
+        F4_new_friend,
+        F5_request_user_info
         // ...
     };
 

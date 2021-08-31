@@ -29,7 +29,7 @@ bool Connection::sendMessage(DataType header, const QJsonObject &data)
         padding_digits.append('0');
     }
     QByteArray json_size = padding_digits + json_size_before_padding;
-    qDebug() << "json size = " << json_size;
+//    qDebug() << "json size = " << json_size;
     // 发送定长9字节消息头，再发送JSON串
     QByteArray send = encodeDataTypeToHeader(header) + json_size + message;
     return write(send) == send.size();
