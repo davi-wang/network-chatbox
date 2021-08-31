@@ -55,7 +55,7 @@
      <rect>
       <x>20</x>
       <y>220</y>
-      <width>260</width>
+      <width>181</width>
       <height>80</height>
      </rect>
     </property>
@@ -105,7 +105,7 @@
    <widget class="QTextEdit" name="textEdit_code">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>200</x>
       <y>220</y>
       <width>100</width>
       <height>80</height>

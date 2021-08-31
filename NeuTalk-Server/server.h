@@ -14,6 +14,7 @@
 #include "connection.h"
 #include "emailverify.h"
 #include "mysql.h"
+#include "serverwindow.h"
 
 class Server : public QObject
 {
@@ -26,10 +27,11 @@ public:
     }
     // 备选的主机ip列表
     QList<QHostAddress> hostadd_list;
-    // 根据指定的主机ip和端口号开启TcpServer
-    bool startServer(QHostAddress hostadd, QString serverPort);
+    bool startServer();  // 使用默认主机ip和默认端口
+    bool startServer(QHostAddress hostadd, QString serverPort);  // 根据指定的主机ip和端口号开启
     void stopServer();
     void getHostInfo();  // 获取主机网络信息，然后自动开启服务器
+    friend class ServerWindow;
 
 signals:
     void displayText(const QString &);
@@ -48,7 +50,7 @@ private:
 
     QString default_port;
     TcpServer *tcp_server;
-    QList<Connection*> connections;
+//    QList<Connection*> connections;
     EmailVerify email_verify;
     QMap<int, Connection*> onlines;
 };

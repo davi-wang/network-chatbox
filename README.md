@@ -221,8 +221,77 @@ QByteArray QJsonDocument::toJson(QJsonDocument::JsonFormat format)
    int friend_uid = json.value("from_uid").toInt();  // 是谁发给我的消息
    QString new_message = json.value("message").toString();  // 聊天内容
    QString datetime_str = json.value("datetime").toString();  // 什么时候发的，字符串格式
-   QDateTime datetime = QDateTime::fromString(datetime_str, "yyyy-MM-dd hh:mm:ss");  // 什么时候发的
+   QDateTime datetime = QDateTime::from
+       String(datetime_str, "yyyy-MM-dd hh:mm:ss");  // 什么时候发的
    ```
+
+
+
+
+
+## 加好友流程
+
+### 1 用户按email/username查询信息
+
+:star: send search request:
+
+``` C++
+json.insert("search", QJsonValue(input string));
+```
+
+### 2 服务器返回查到的匹配用户列表
+
+:star: receive a list
+
+``` C++
+QJsonArray list = data.value("users_list").toArray();
+    for (int i=0; i < list.size(); ++i) {
+        QJsonObject friend_info = list.at(i).toObject();
+        int friend_uid = friend_info.value("uid").toInt();
+        QString friend_email = friend_info.value("email").toString();
+        QString friend_name = friend_info.value("nickname").toString();
+    }
+```
+
+然后把一个或多个结果显示到ui上，让用户按按钮选择加好友
+
+### 3 申请加好友
+
+客户端把上面返回的列表中的其中一个uid发给服务器，申请加这个人为好友
+
+:star: send add friend request
+
+``` C++
+QJsonObject json;
+json.insert("uid", selected_uid);
+```
+
+## 4 出现新好友
+
+服务端会告诉双方，你们被强制加好友了
+
+:star: new friend !
+
+``` C++
+json.value("new_friend_uid").toInt();
+```
+
+一定要存这个消息，收到之后，你主动发下一个
+
+### 5 拉取好友信息
+
+用户问服务器，关于一个人的个人信息，以便显示到ui上（只有uid没用）
+
+:star: pull user profile
+
+``` C++
+json.value("uid").toInt();
+json.value("email").toString();
+json.value("username").toString();
+```
+
+
+
 
 
 ### 附录-JSON解析函数

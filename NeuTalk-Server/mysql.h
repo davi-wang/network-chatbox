@@ -32,10 +32,11 @@ public:
     void createUserstable();//创建用户信息表
     int registerUser(QString email, QString nickname, QString password);//用户注册
     bool login(QString email, QString password, int &);//用户登录
-    bool queryUserInfo(QString email);//查询用户_通过email
+    QJsonObject queryUserInfo(QString email);//通过邮箱或用户名查询用户
+    QJsonObject queryUser(int uid);//通过uid查询用户
     QJsonObject queryFriendlist(int user_uid);//查询某用户好友列表
     void createFriendshiptable();//创建好友关系表
-    void addFriends(int user_uid, int friend_uid);//添加好友
+    bool addFriends(int user_uid, int friend_uid);//添加好友
     void deleteFriend(int user_uid, int friend_uid);//删除好友
     bool IsBfriendtoA(int a_uid, int b_uid);//查询B是否为A的好友
     void createSinglehistorytable(int a_uid, int b_uid);//创建私聊消息记录表

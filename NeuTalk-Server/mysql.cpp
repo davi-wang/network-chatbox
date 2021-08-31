@@ -35,7 +35,7 @@ void MySql::createUserstable(){
     QStringList tablelist = database.tables();
     sqlquery = new QSqlQuery(database);
     if(!tablelist.contains("userstable")){
-        QString createusers = "CREATE TABLE userstable (uid int primary key not null, email text, nickname text, password text)";
+        QString createusers = "CREATE TABLE userstable (uid int primary key not null, email text unique, nickname text, password text)";
         if(sqlquery->prepare(createusers)){
             if(sqlquery->exec()){
                 qDebug() << "[DB] " << "create userstable OK !";
@@ -151,18 +151,16 @@ bool MySql::queryInfo(QString tableName, QString column, QString info){
     return flag;
 }
 
-bool MySql::queryUserInfo(QString email){
+QJsonObject MySql::queryUser(int uid){
     int flag = 0;
-    QString str_select = "SELECT * FROM userstable WHERE email = "+email;
+    QJsonObject json;
+    QString str_select = "SELECT * FROM userstable WHERE uid = "+QString::number(uid);
     if(sqlquery->prepare(str_select)){
         if(sqlquery->exec()){
             while(sqlquery->next()){
-                qDebug() << "[DB] " << "uid:"<<sqlquery->value(0).toString()
-                       <<"email:"<<sqlquery->value(1).toString()
-                      <<"nickname:"<<sqlquery->value(2).toString();
-                emit dispalyUserstext("[DB]  uid:"+sqlquery->value(0).toString()
-                                      +"email:"+sqlquery->value(1).toString()
-                                      +"nickname"+sqlquery->value(2).toString());
+                json.insert("uid", QJsonValue(sqlquery->value(0).toInt()));
+                json.insert("email", QJsonValue(sqlquery->value(1).toString()));
+                json.insert("nickname", QJsonValue(sqlquery->value(2).toString()));
                 flag = 1;
             }
         }
@@ -170,13 +168,41 @@ bool MySql::queryUserInfo(QString email){
     if(flag){
         qDebug() << "[DB] " << "selected successfully !";
         emit dispalyUserstext("[DB]  selected successfully !");
-        return true;
     }
     else{
         qDebug() << "[DB] " << "no one was found !";
         emit dispalyUserstext("[DB]  no one was found !");
-        return false;
     }
+    return json;
+}
+
+QJsonObject MySql::queryUserInfo(QString info){
+    int flag = 0;
+    QJsonObject json;
+    QString str_select = "SELECT * FROM userstable WHERE email = '"+info+"' OR nickname = '"+info+"'";
+    if(sqlquery->prepare(str_select)){
+        if(sqlquery->exec()){
+            QJsonArray users_list;
+            while(sqlquery->next()){
+                QJsonObject users_info;
+                users_info.insert("uid", QJsonValue(sqlquery->value(0).toInt()));
+                users_info.insert("email", QJsonValue(sqlquery->value(1).toString()));
+                users_info.insert("nickname", QJsonValue(sqlquery->value(2).toString()));
+                users_list.append(QJsonValue(users_info));
+                flag = 1;
+            }
+            json.insert("users_list", QJsonValue(users_list));
+        }
+    }
+    if(flag){
+        qDebug() << "[DB] " << "selected successfully !";
+        emit dispalyUserstext("[DB]  selected successfully !");
+    }
+    else{
+        qDebug() << "[DB] " << "no one was found !";
+        emit dispalyUserstext("[DB]  no one was found !");
+    }
+    return json;
 }
 
 QJsonObject MySql::queryFriendlist(int user_uid){
@@ -250,23 +276,29 @@ void MySql::deleteData(QString tableName, QString column, QString info){
     }
 }
 
-void MySql::addFriends(int user_uid, int friend_uid){
+bool MySql::addFriends(int user_uid, int friend_uid){
     if(!IsBfriendtoA(user_uid, friend_uid)){
-        QString insert = "INSERT INTO friendshiptable(user_uid,friend_uid) VALUES("+QString::number(user_uid)+","+QString::number(friend_uid)+")";
-        if(sqlquery->prepare(insert)){
+        QString insert1 = "INSERT INTO friendshiptable(user_uid,friend_uid) VALUES("+QString::number(user_uid)+","+QString::number(friend_uid)+")";
+        QString insert2 = "INSERT INTO friendshiptable(user_uid,friend_uid) VALUES("+QString::number(friend_uid)+","+QString::number(user_uid)+")";
+        if(sqlquery->prepare(insert1)){
             if(sqlquery->exec()){
-                qDebug() << "[DB] " << "addfriend successfully !";
-                emit dispalyUserstext("[DB]  addfriend successfully !");
+                if(sqlquery->prepare(insert2)){
+                    if(sqlquery->exec()){
+                        qDebug() << "[DB] " << "addfriend successfully !";
+                        emit dispalyUserstext("[DB]  addfriend successfully !");
+                        return true;
+                    }
+                }
             }
         }
-        else{
-            qDebug() << "[DB] " << "add fail !";
-            emit dispalyUserstext("[DB]  add fail !");
-        }
+        qDebug() << "[DB] " << "add fail !";
+        emit dispalyUserstext("[DB]  add fail !");
+        return false;
     }
     else{
         qDebug() << "[DB] " << "B is already a friend of A !";
         emit dispalyUserstext("[DB]  B is already a friend of A !");
+        return false;
     }
 }
 

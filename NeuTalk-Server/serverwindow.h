@@ -21,7 +21,18 @@ public:
 private slots:
     void displayLine(const QString &);
 
+    void on_actionopen_triggered();
+
+    void on_actionclose_triggered();
+
+    void on_actionZoom_in_triggered();
+
+    void on_actionZoom_out_triggered();
+
+    void resizeEvent(QResizeEvent*) override;
+
 private:
     Ui::ServerWindow *ui;
+    int font_size;
 };
 #endif // SERVERWINDOW_H

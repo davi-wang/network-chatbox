@@ -28,7 +28,7 @@ void Server::lookedUp(QHostInfo host)
     }
     // 自动开启服务器
     if (!hostadd_list.empty()) {
-        startServer(hostadd_list.at(0), default_port);
+        startServer();
     }
 }
 
@@ -54,6 +54,7 @@ void Server::closeClient()
 
 void Server::processMessage(Connection::DataType header, const QJsonObject &data)
 {
+    MySql *database = MySql::gethand();
     Connection* client_connection = qobject_cast<Connection*>(sender());
     emit displayText("[SOCKET] Server received <" + QString::number(header) +
                      "> from client:" + client_connection->peerAddress().toString());
@@ -71,7 +72,6 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
             send_to->sendMessage(Connection::C4_send_message, data);
         }
         // 存到历史记录数据库
-        MySql *database = MySql::gethand();
         database->insertSinglehistory(from_uid.toInt(), send_to_uid.toInt(), message, datetime);
     }
     else if (header == Connection::R1_request_email)
@@ -91,11 +91,18 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         EmailVerify::VerificationError error;
         error = email_verify.verify(user_email, verification_code);
         if (error == EmailVerify::NoError) {
-            emit displayText("[INFO] user:" + QString(user_email) + "has successfully registered an account.");
-            MySql* database = MySql::gethand();
-            int new_uid = database->registerUser(user_email, username, password);
-            client_connection->sendMessage(Connection::R6_success, QJsonObject());
-            emit displayText("[INFO] Allocated uid" + QString::number(new_uid) + " to " + user_email);
+            if (!database->queryUserInfo(user_email).empty()) {
+                emit displayText("[INFO] user:" + QString(user_email) + "has successfully registered an account.");
+                int new_uid = database->registerUser(user_email, username, password);
+                client_connection->sendMessage(Connection::R6_success, QJsonObject());
+                emit displayText("[INFO] Allocated uid" + QString::number(new_uid) + " to " + user_email);
+            }
+            else {
+                emit displayText("[INFO] user:" + QString(user_email) + " registration failed.");
+                QJsonObject reply;
+                reply.insert("error", QJsonValue("-1"));
+                client_connection->sendMessage(Connection::R5_fail, reply);
+            }
         }
         else {
             emit displayText("[INFO] user:" + QString(user_email) + " registration failed.");
@@ -109,7 +116,6 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         QByteArray user_email = data.value("user_email").toString().toUtf8();
         QByteArray password = data.value("password").toString().toUtf8();
         client_connection->sendMessage(Connection::L2_logging, QJsonObject());
-        MySql* database = MySql::gethand();
         int your_uid = -1;
         if (database->login(user_email, password, your_uid)) {
             emit displayText("[INFO] user:" + user_email + "successfully logged in!");
@@ -133,9 +139,35 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         // 同步数据C2
         emit displayText("[INFO] query chat history between " +
                          QString::number(from_uid) + " - " + QString::number(to_uid));
-        MySql *database = MySql::gethand();
         QJsonObject sync_data = database->queryHistorylist(from_uid, to_uid);
         client_connection->sendMessage(Connection::C2_sychro_history, sync_data);
+    }
+    else if (header == Connection::F1_search_user)
+    {
+        QJsonObject matched_users = database->queryUserInfo(data.value("search").toString());
+        client_connection->sendMessage(Connection::F2_return_users, matched_users);
+    }
+    else if (header == Connection::F3_request_add_friend)
+    {
+        int friend_uid = data.value("uid").toInt();
+        if (database->addFriends(client_connection->peer_uid, friend_uid)) {
+            QDateTime now = QDateTime::currentDateTime();
+            database->insertSinglehistory(client_connection->peer_uid, friend_uid,
+                                          "Greetings! We are friends now.", now.toString("yyyy-MM-dd hh:mm:ss"));
+            QJsonObject reply, tell;
+            reply.insert("new_friend_uid", QJsonValue(int(friend_uid)));
+            tell.insert("new_friend_uid", QJsonValue(int(client_connection->peer_uid)));
+            client_connection->sendMessage(Connection::F4_new_friend, reply);
+            if (onlines.contains(friend_uid)) {
+                onlines[friend_uid]->sendMessage(Connection::F4_new_friend, tell);
+            }
+        }
+    }
+    else if (header == Connection::F5_request_user_info)
+    {
+        int query_user = data.value("uid").toInt();
+        QJsonObject result = database->queryUser(query_user);
+        client_connection->sendMessage(Connection::F5_request_user_info, result);
     }
     else {
         emit displayText("[ERROR] Undefined message received:" + QString::number(header));
@@ -151,6 +183,28 @@ void Server::synchro_friend_list_for(Connection* client_connection)
     QJsonObject friend_list_json = database->queryFriendlist(client_connection->peer_uid);
     client_connection->sendMessage(Connection::L5_synchro_data, friend_list_json);
     client_connection->sendMessage(Connection::L6_synchronization_complete, QJsonObject());
+}
+
+bool Server::startServer()
+{
+    if (tcp_server != nullptr) {
+        delete tcp_server;
+    }
+    tcp_server = new TcpServer();
+    qDebug() << hostadd_list.at(0);
+    if (tcp_server->listen(hostadd_list.at(0), default_port.toUInt())) {
+        qDebug() << "listen";
+        connect(tcp_server, SIGNAL(newConnection(Connection *)),
+                this, SLOT(connectClient(Connection *)));
+        emit displayText("[INFO] Server is up. Listening for new connections.");
+        emit displayText("[INFO] Server host ip: " + hostadd_list.at(0).toString());
+        emit displayText("[INFO] Server port: " + default_port);
+        return true;
+    }
+    else {
+        emit displayText("[ERROR] Listen for connections failed. Server is down. ");
+        return false;
+    }
 }
 
 bool Server::startServer(QHostAddress hostAdd, QString serverPort)
@@ -177,6 +231,7 @@ void Server::stopServer()
 {
     tcp_server->close();
     delete tcp_server;
-    connections.clear();
+    tcp_server = nullptr;
+    onlines.clear();
     emit displayText("[INFO] Server cloesed. ");
 }
