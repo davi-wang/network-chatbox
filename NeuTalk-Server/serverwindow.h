@@ -29,7 +29,7 @@ private slots:
 
     void on_actionZoom_out_triggered();
 
-    void resizeEvent(QResizeEvent*) override;
+    void on_actionblank_line_triggered();
 
 private:
     Ui::ServerWindow *ui;

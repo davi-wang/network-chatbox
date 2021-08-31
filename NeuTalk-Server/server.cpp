@@ -191,9 +191,7 @@ bool Server::startServer()
         delete tcp_server;
     }
     tcp_server = new TcpServer();
-    qDebug() << hostadd_list.at(2);
     if (tcp_server->listen(hostadd_list.at(2), default_port.toUInt())) {
-        qDebug() << "listen";
         connect(tcp_server, SIGNAL(newConnection(Connection *)),
                 this, SLOT(connectClient(Connection *)));
         emit displayText("[INFO] Server is up. Listening for new connections.");

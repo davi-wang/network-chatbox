@@ -57,8 +57,9 @@ void ServerWindow::on_actionZoom_out_triggered()
     ui->textEdit->setFont(QFont("Consolas", font_size));
 }
 
-void ServerWindow::resizeEvent(QResizeEvent* event)
+void ServerWindow::on_actionblank_line_triggered()
 {
-    qDebug() << "resizing????";
-    ui->textEdit->update();
+    ui->textEdit->append(" - ");
+    ui->textEdit->append(" - ");
+    ui->textEdit->append(" - ");
 }

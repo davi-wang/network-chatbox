@@ -26,7 +26,7 @@ private:
     QByteArray generateCode();
 
     unsigned int verification_code_length;
-    MailSender sender;
+    MailSender* sender;
     QMap<QByteArray, Node> storage;
 };
 
