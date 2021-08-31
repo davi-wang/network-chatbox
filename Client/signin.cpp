@@ -40,6 +40,9 @@ SignIn::SignIn(QWidget *parent) :
     else{
         ui->userEdit->setCurrentIndex(0); //初始化索引为 0
     }
+
+
+
 }
 
 SignIn::~SignIn()

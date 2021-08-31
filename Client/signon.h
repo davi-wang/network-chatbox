@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <signin.h>
 #include <QMessageBox>
-
+#include"Repeater.h"
 namespace Ui { class Signon; }
 
 class Signon : public QWidget

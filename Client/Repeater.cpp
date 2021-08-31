@@ -17,6 +17,7 @@ void ClientServer::ProcessMsg(Connection::DataType header, QJsonObject Data)
 {
     switch(header)
     {
+
     case Connection::R2_verification_sending: emit verification_sending();break;
     case Connection::R3_verification_sent: emit verification_sent();break;
     case Connection::R5_fail: emit Reg_fail(Data); break;

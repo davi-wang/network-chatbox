@@ -3,7 +3,7 @@
 
 #include <QWidget>
 //#include<QPainter>
-
+#include"Repeater.h"
 
 namespace Ui {
 class login;
