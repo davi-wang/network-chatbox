@@ -38,41 +38,42 @@ public:
 
     int local_uid;
     QString UsrName;
-    QJsonObject Register;
+
+
+    VerificationError ErrorReason;
+
+
 
 
     QMap<int,UsrInfo> FriendList;//好友列表
     QVector<int>   Friend_u_IDs;//好友U_ID
 
 
-   // QQueue<ChatRecord> HistoryInfo;//历史记录
-    ReceieveText GetTextMsg;//收到发来的消息
-    VerificationError ErrorReason;//错误信息
-
-
-    QMap<int,UsrInfo> NewFriends;//好友列表
-    QVector<int>   NewFriend_u_ID;//好友U_ID
+    QMap<int,UsrInfo> NewFriends;//新好友列表
+    QVector<int>   NewFriend_u_ID;//新好友U_ID
     int * NewFriend_ID;  //选中好友的U_ID
 
-
+    QJsonObject Cache;  //额外缓存
 signals:
-    void verification_sending();
-    void verification_sent();
-    void Reg_fail();
-    void Reg_Success();
+      void verification_sending();
+      void verification_sent();
+      void Reg_fail();
+      void Reg_Success();
 
-    void Logging();
-    void SignInSuccess();
-    void SignInFail();
-    void synchro_data();
-    void synchronization_complete();
+      void Logging();
+      void SignInSuccess();
+      void SignInFail();
+      void synchro_data();
+      void synchronization_complete();
 
-    void sychro_history(QJsonObject);
-    void send_message();
+      void return_users();  //返回新好友列表
+      void new_friend();    //新好友uID
+      void request_user_info(); //好友列表中添加新好友信息
 
-    void return_users();  //返回新好友列表
-    void new_friend();    //新好友uID
-    void request_user_info(); //好友列表中添加新好友信息
+      void DistributeHistory(const QJsonObject &);//分发历史信息
+      void DistributeMsg(const QJsonObject &);//分发信息
+
+
 
 
 private:
@@ -92,16 +93,11 @@ private:
         delete connector;
 
     }
-
-    Connection* connector;
+    Connection* connector;  //连接器
     bool connect_status=false;
 
 
-    QJsonObject Cache;
-
-
-    void processRecievedTextMsg(QJsonObject Data);  //加载收到的信息
-    void parseFriendList(QJsonObject data);   //加载还有列表
+    void parseFriendList(QJsonObject data);   //加载好友列表
 
 private slots:
     void ProcessMsg(Connection::DataType,const QJsonObject &);

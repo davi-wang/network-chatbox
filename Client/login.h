@@ -33,9 +33,12 @@ public:
     ~login();
 
 
+
 private slots:
     void on_pushButton_clicked();
     void AddFriendFinish();
+    void DistributeHistory(const QJsonObject &);  //历史分发
+    void DistributeMsg(const QJsonObject &);//信息分发
 
 private:
     Ui::login *ui;

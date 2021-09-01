@@ -8,13 +8,8 @@ ChatWindow::ChatWindow(QWidget *parent, QString friend_name, int friend_uid, int
     ui->setupUi(this);
 
     client = ClientServer::GetInstance();
-    connect(client,SIGNAL(sychro_history(QJsonObject)),this,SLOT(LoadHistory(QJsonObject)));
+
     setWindowTitle(friend_nickname);
-
-
-
-    connect(client,SIGNAL(send_message()),this,SLOT(newMessage()));
-
 
 }
 
@@ -25,22 +20,19 @@ ChatWindow::~ChatWindow()
 
 void ChatWindow::displayMessage(QString username, const QString &datetime, const QString &text)
 {
-    ui->msgBrowser->setCurrentFont(QFont("Times New Romance"));
+    ui->msgBrowser->setCurrentFont(QFont("Times New Romance", 9));
     ui->msgBrowser->append("["+datetime+"]  "+username);
-    ui->msgBrowser->setCurrentFont(QFont("Consolas"));
+    ui->msgBrowser->setCurrentFont(QFont("Consolas", 13));
     ui->msgBrowser->append(text);
 }
 
-void ChatWindow::newMessage()
+void ChatWindow::newMessage(const QJsonObject &data)
 {
-
-
-    displayMessage(friend_nickname, client->GetTextMsg.datetime_str, client->GetTextMsg.new_message);
+    displayMessage(friend_nickname, data.value("datetime").toString(), data.value("message").toString());
 }
 
 void ChatWindow::sendMessage()
 {
-
     QJsonObject data;
     data.insert("from_uid", QJsonValue(client->local_uid));
     data.insert("to_uid", QJsonValue(to_uid));
@@ -58,44 +50,25 @@ void ChatWindow::on_sendBtn_clicked()
     ui->msgtxtEdit->setFocus();
 }
 
-
-void ChatWindow::LoadHistory(QJsonObject history)
+void ChatWindow::LoadHistory(const QJsonObject &history)
 {
-    if(his.empty())
-    {
-     qDebug()<<"Enter LoadHistory";
-
-     QJsonArray list = history.value("history_list").toArray();
+    qDebug() << history;
+    QJsonArray list = history.value("history_list").toArray();
     for (int i=0; i < list.size(); ++i) {
-            QJsonObject friend_info = list.at(i).toObject();
-            // 下面三行是一条聊天消息
-            his.push_back(friend_info);
+        QJsonObject chat_message = list.at(i).toObject();
+        // 如果消息是对方发的
+        if (chat_message.value("from_uid") == to_uid) {
+            displayMessage(friend_nickname,
+                           chat_message.value("datetime").toString(),
+                           chat_message.value("message").toString());
         }
-        int cnt=his.count();
-        for(int i=0;i<cnt;i++)
-         {
-
-            QJsonObject friend_info=his[i];
-            ChatRecord Row;
-            Row.sender_uid = friend_info.value("sender_uid").toString().toInt();
-            Row.receiver_uid = friend_info.value("receiver_uid").toString().toInt();
-            Row.datetime = friend_info.value("datetime").toString();
-            Row.message = friend_info.value("message").toString();
-
-            if(Row.sender_uid==client->local_uid)
-            {
-
-                displayMessage(client->UsrName,Row.datetime,Row.message);
-
-            }
-            if(Row.sender_uid==to_uid)
-            {
-                 displayMessage(client->FriendList[to_uid].NickName,Row.datetime,Row.message);
-            }
+        else {
+            displayMessage(client->UsrName,
+                           chat_message.value("datetime").toString(),
+                           chat_message.value("message").toString());
         }
     }
 }
-
 
 void ChatWindow::closeEvent(QCloseEvent *event)
 {

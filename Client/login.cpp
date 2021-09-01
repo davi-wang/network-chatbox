@@ -58,13 +58,12 @@ login::login(QWidget *parent) :
                 ChatWindows[id]=new ChatWindow(nullptr,Name,id,Repeater->local_uid);
            }
            ChatWindows[id]->show();
-
-
-
         });
 
     }
 
+    connect(Repeater,SIGNAL(DistributeHistory(const QJsonObject &)),this,SLOT(DistributeHistory(const QJsonObject &)));
+    connect(Repeater,SIGNAL(DistributeMsg(const QJsonObject &)),this,SLOT(DistributeMsg(const QJsonObject &)));
 
 }
 
@@ -147,4 +146,15 @@ void login::AddFriendFinish()
 
 }
 
-
+void login::DistributeHistory(const QJsonObject &Data)
+{
+    int friend_id=Data.value("request_uid").toInt();
+    if (ChatWindows.contains(friend_id))
+            ChatWindows[friend_id]->LoadHistory(Data);
+}
+void login::DistributeMsg(const QJsonObject &Data)
+{
+   int friend_id=Data.value("from_uid").toInt();
+   if (ChatWindows.contains(friend_id))
+        ChatWindows[friend_id]->newMessage(Data);
+}
