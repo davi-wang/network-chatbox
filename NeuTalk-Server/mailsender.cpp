@@ -14,7 +14,6 @@ void MailSender::sendEmail(const QByteArray &recvaddr,
                            const QString &content)
 {
     username = "xxdxx2021@126.com";
-//    password= "NNPWUNMXQIDSSAPP";
     password = "ELNVCSPSLDTAEVWR";
 
     this->recvaddr = recvaddr;

@@ -17,6 +17,7 @@ void EmailVerify::requestVerify(const QByteArray &email)
     QDateTime now = QDateTime::currentDateTime();
     storage[email] = Node({now, verification_code});
 }
+
 EmailVerify::VerificationError EmailVerify::verify(const QByteArray &email, const QByteArray &code)
 {
     if (!storage.contains(email)) {
