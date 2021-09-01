@@ -2,6 +2,8 @@
 #define SERVERWINDOW_H
 
 #include <QMainWindow>
+#include <QFile>
+#include <QFileDialog>
 
 #include "server.h"
 #include "mysql.h"

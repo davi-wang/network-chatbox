@@ -124,8 +124,10 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         if (database->login(user_email, password, your_uid)) {
             emit displayText("[INFO] user: \"" + user_email + "\" successfully logged in!");
             QJsonObject reply;
+            QString username = database->queryUser(your_uid).value("nickname").toString();
             reply.insert("your_uid", QJsonValue(your_uid));
             reply.insert("server_uid", QJsonValue(int(0)));
+            reply.insert("username", QJsonValue(username));
             client_connection->local_uid = 0;
             client_connection->peer_uid = your_uid;
             client_connection->sendMessage(Connection::L4_success, reply);

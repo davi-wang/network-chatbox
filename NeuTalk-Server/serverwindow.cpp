@@ -30,6 +30,13 @@ void ServerWindow::displayLine(const QString &plain_text)
 
 ServerWindow::~ServerWindow()
 {
+//    QString filename = tr(QDateTime::currentDateTime().toString() + ".log");
+//    QFile log_output(filename);
+//    if (log_output.open(QIODevice::WriteOnly | QIODevice::Text)) {
+//        QTextStream out(&log_output);
+//        out << ui->textEdit->toPlainText();
+//    }
+//    log_output.close();
     delete ui;
 }
 
