@@ -22,7 +22,8 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
     switch(header)
     {
 
-    case Connection::R2_verification_sending: emit verification_sending();break;
+    case Connection::R2_verification_sending:
+        emit verification_sending();break;
     case Connection::R3_verification_sent: emit verification_sent();break;
     case Connection::R5_fail:
     {
@@ -55,7 +56,7 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
     case Connection::L5_synchro_data:
     {
         parseFriendList(Data);
-        emit synchro_data();break;
+       emit synchro_data();break;
     }
     case Connection::L6_synchronization_complete:
         emit synchronization_complete();break;
@@ -64,13 +65,12 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
     case Connection::C2_sychro_history:
     {
 
-        qDebug()<<"Get history";
-        emit sychro_history(Data);break;
+       emit DistributeHistory(Data);
+        break;
     }
     case Connection::C4_send_message:
     {
-       processRecievedTextMsg( Data);
-        emit send_message();
+      emit DistributeMsg( Data);
         break;
     }
 
@@ -126,19 +126,9 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
     }
 }
 
-void ClientServer::processRecievedTextMsg(QJsonObject Data)
-{
-    GetTextMsg.uid =Data.value("uid").toInt();//uid
-//    QString name;//昵称
-    GetTextMsg.friend_uid= Data.value("from_uid").toInt();  // 是谁发给我的消息
-    GetTextMsg.new_message= Data.value("message").toString();  // 聊天内容
-    GetTextMsg.datetime_str= Data.value("datetime").toString();  // 什么时候发的，字符串格式
-    GetTextMsg.datetime = QDateTime::fromString(GetTextMsg.datetime_str, "yyyy-MM-dd hh:mm:ss");  // 什么时候发的格式处理
-
-}
 
 
-void ClientServer::parseFriendList(QJsonObject data)
+void ClientServer::parseFriendList(const QJsonObject data)
 {
     QJsonArray list = data.value("friend_list").toArray();
 
@@ -156,3 +146,6 @@ void ClientServer::parseFriendList(QJsonObject data)
     }
 
 }
+
+
+

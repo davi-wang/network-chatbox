@@ -20,14 +20,12 @@ public:
     explicit ChatWindow(QWidget *parent = nullptr,
                         QString friend_name = "", int friend_uid = -1, int my_uid = -1);
     ~ChatWindow();
+    void newMessage(const QJsonObject &);
+    void LoadHistory(const QJsonObject &);
 
 private slots:
     void closeEvent(QCloseEvent *event) override;
-    void newMessage();
-  //  void displayHistory(const QJsonObject &);
-    void LoadHistory(QJsonObject history);
     void on_sendBtn_clicked();
-
 
 private:
     void sendMessage();
