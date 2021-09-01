@@ -58,11 +58,10 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
 {
     MySql *database = MySql::gethand();
     Connection* client_connection = qobject_cast<Connection*>(sender());
+    // 此选项打开时，服务端收到消息会显示
     if (display_socket_debug) {
         emit displayText("[SOCKET] Server received <" + QString::number(header) +
                          "> from client:" + client_connection->peerAddress().toString());
-        qDebug() << "Server received <" << header <<
-                    "> from client:" << client_connection->peerAddress().toString();
     }
     if (header == Connection::C3_request_message)
     {
@@ -102,7 +101,6 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
                 emit displayText("[INFO] Allocated uid" + QString::number(new_uid) + " to " + user_email);
             }
             else {
-                emit displayText("[INFO] user:" + QString(user_email) + " registration failed. -1");
                 QJsonObject reply;
                 reply.insert("error", QJsonValue("-1"));
                 client_connection->sendMessage(Connection::R5_fail, reply);
@@ -117,7 +115,6 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
     }
     else if (header == Connection::L1_request_login)
     {
-        emit displayText("[INFO] received login request!");
         QByteArray user_email = data.value("user_email").toString().toUtf8();
         QByteArray password = data.value("password").toString().toUtf8();
 //        client_connection->sendMessage(Connection::L2_logging, QJsonObject());
@@ -132,7 +129,6 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
             client_connection->peer_uid = your_uid;
             client_connection->sendMessage(Connection::L4_success, reply);
             onlines[your_uid] = client_connection;
-
             emit displayText("[INFO] user: \"" + user_email + "\" successfully logged in!");
             emit synchro_friend_list_for(client_connection);
         }
@@ -145,8 +141,8 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         int from_uid = client_connection->peer_uid;
         int to_uid = data.value("request_uid").toInt();
         // 同步数据C2
-        emit displayText("[INFO] query chat history between " +
-                         QString::number(from_uid) + " - " + QString::number(to_uid));
+//        emit displayText("[INFO] query chat history between " +
+//                         QString::number(from_uid) + " - " + QString::number(to_uid));
         QJsonObject sync_data = database->queryHistorylist(from_uid, to_uid);
         client_connection->sendMessage(Connection::C2_sychro_history, sync_data);
     }
@@ -187,16 +183,13 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
 
 void Server::synchro_friend_list_for(Connection* client_connection)
 {
-    emit displayText("[INFO] enter slot");
     if (!onlines.contains(client_connection->peer_uid))
         return;
     // 发送同步数据包L5
     MySql *database = MySql::gethand();
     QJsonObject friend_list_json = database->queryFriendlist(client_connection->peer_uid);
-    emit displayText("[INFO] before");
     client_connection->sendMessage(Connection::L5_synchro_data, friend_list_json);
     client_connection->sendMessage(Connection::L6_synchronization_complete, QJsonObject());
-    emit displayText("[INFO] after");
 }
 
 bool Server::startServer()
