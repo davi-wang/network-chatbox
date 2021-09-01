@@ -35,6 +35,9 @@ private:
     int to_uid;
     int from_uid;
     ClientServer* client ;
+
+
+    void LoadHistory();
 };
 
 #endif // CHATWINDOW_H
