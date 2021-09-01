@@ -40,7 +40,7 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
 
         int Error = Data.value("error").toInt();
          ErrorReason      = VerificationError(Error);
-     qDebug()<<ErrorReason;
+        qDebug()<<ErrorReason;
         SignInFail( );
         break;
     }
@@ -49,6 +49,7 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
         connector->local_uid=Data.value("your_uid").toInt();
         local_uid=connector->local_uid;
         connector->peer_uid=Data.value("server_uid").toInt();
+        UsrName=Data.value("username").toString();
         emit SignInSuccess();break;
     }
     case Connection::L5_synchro_data:

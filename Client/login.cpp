@@ -48,7 +48,7 @@ login::login(QWidget *parent) :
            int id=Repeater->Friend_u_IDs[i];
            qDebug()<<"OpenWindows";
            QString Name=Repeater->FriendList[Repeater->Friend_u_IDs[i]].NickName;
-           ChatWindows[id]=new ChatWindow(this,Name,id,Repeater->local_uid);
+           ChatWindows[id]=new ChatWindow(nullptr,Name,id,Repeater->local_uid);
            ChatWindows[id]->show();
 
         });
