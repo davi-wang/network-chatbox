@@ -287,7 +287,7 @@ json.value("new_friend_uid").toInt();
 ``` C++
 json.value("uid").toInt();
 json.value("email").toString();
-json.value("username").toString();
+json.value("nickname").toString();
 ```
 
 
