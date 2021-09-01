@@ -45,7 +45,7 @@ public:
     QVector<int>   Friend_u_IDs;//好友U_ID
 
 
-    QQueue<ChatRecord> HistoryInfo;//历史记录
+   // QQueue<ChatRecord> HistoryInfo;//历史记录
     ReceieveText GetTextMsg;//收到发来的消息
     VerificationError ErrorReason;//错误信息
 
@@ -67,7 +67,7 @@ signals:
     void synchro_data();
     void synchronization_complete();
 
-    void sychro_history();
+    void sychro_history(QJsonObject);
     void send_message();
 
     void return_users();  //返回新好友列表
@@ -101,7 +101,6 @@ private:
 
 
     void processRecievedTextMsg(QJsonObject Data);  //加载收到的信息
-    void parseHistoryList(QJsonObject data);  //加载历史记录
     void parseFriendList(QJsonObject data);   //加载还有列表
 
 private slots:

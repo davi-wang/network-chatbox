@@ -8,7 +8,7 @@ ChatWindow::ChatWindow(QWidget *parent, QString friend_name, int friend_uid, int
     ui->setupUi(this);
 
     client = ClientServer::GetInstance();
-    connect(client,SIGNAL(sychro_history()),this,SLOT(LoadHistory()));
+    connect(client,SIGNAL(sychro_history(QJsonObject)),this,SLOT(LoadHistory(QJsonObject)));
     setWindowTitle(friend_nickname);
 
 
@@ -59,28 +59,52 @@ void ChatWindow::on_sendBtn_clicked()
 }
 
 
-void ChatWindow::LoadHistory()
+void ChatWindow::LoadHistory(QJsonObject history)
 {
-    qDebug()<<"Enter LoadHistory";
-    while(!client->HistoryInfo.empty())
+    if(his.empty())
     {
-        ChatRecord row=client->HistoryInfo.front();
+     qDebug()<<"Enter LoadHistory";
 
-        if(row.sender_uid==client->local_uid)
-        {
-
-            displayMessage(client->UsrName,row.datetime,row.message);
-
+     QJsonArray list = history.value("history_list").toArray();
+    for (int i=0; i < list.size(); ++i) {
+            QJsonObject friend_info = list.at(i).toObject();
+            // 下面三行是一条聊天消息
+            his.push_back(friend_info);
         }
-        if(row.sender_uid==to_uid)
-        {
-             displayMessage(client->FriendList[to_uid].NickName,row.datetime,row.message);
+        int cnt=his.count();
+        for(int i=0;i<cnt;i++)
+         {
+
+            QJsonObject friend_info=his[i];
+            ChatRecord Row;
+            Row.sender_uid = friend_info.value("sender_uid").toString().toInt();
+            Row.receiver_uid = friend_info.value("receiver_uid").toString().toInt();
+            Row.datetime = friend_info.value("datetime").toString();
+            Row.message = friend_info.value("message").toString();
+
+            if(Row.sender_uid==client->local_uid)
+            {
+
+                displayMessage(client->UsrName,Row.datetime,Row.message);
+
+            }
+            if(Row.sender_uid==to_uid)
+            {
+                 displayMessage(client->FriendList[to_uid].NickName,Row.datetime,Row.message);
+            }
         }
-        client->HistoryInfo.pop_front();
     }
 }
+
 
 void ChatWindow::closeEvent(QCloseEvent *event)
 {
     qDebug() << "window closed";
 }
+
+
+
+
+
+
+

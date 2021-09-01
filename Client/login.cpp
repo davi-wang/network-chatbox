@@ -119,8 +119,17 @@ void login::AddFriendFinish()
         {
 
             int id=Repeater->Friend_u_IDs[i];
+
+
+            QJsonObject json;
+            json.insert("request_uid", QJsonValue(Repeater->Friend_u_IDs[i]));
+            Repeater->SendMsg(Connection::C1_request_chat,json);
+
+
             QString Name=Repeater->FriendList[Repeater->Friend_u_IDs[i]].NickName;
-            ChatWindows[id]=new ChatWindow(this,Name,id,Repeater->local_uid);
+            if (!ChatWindows.contains(id)) {
+                 ChatWindows[id]=new ChatWindow(nullptr,Name,id,Repeater->local_uid);
+            }
             ChatWindows[id]->show();
 
 

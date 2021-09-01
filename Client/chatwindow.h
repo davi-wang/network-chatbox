@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QObject>
 #include <QDebug>
-
+#include<DataTypes.h>
 #include "connection.h"
 #include "Repeater.h"
 
@@ -25,7 +25,7 @@ private slots:
     void closeEvent(QCloseEvent *event) override;
     void newMessage();
   //  void displayHistory(const QJsonObject &);
-    void LoadHistory();
+    void LoadHistory(QJsonObject history);
     void on_sendBtn_clicked();
 
 
@@ -37,6 +37,7 @@ private:
     int to_uid;
     int from_uid;
     ClientServer* client ;
+    QVector<QJsonObject> his;
 
 
 
