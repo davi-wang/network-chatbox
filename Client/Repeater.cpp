@@ -64,6 +64,7 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
     case Connection::C2_sychro_history:
     {
         parseHistoryList(Data);
+        qDebug()<<"Get history";
         emit sychro_history();break;
     }
     case Connection::C4_send_message:
@@ -144,8 +145,8 @@ void ClientServer::parseHistoryList(QJsonObject data)
         // 下面三行是一条聊天消息
         ChatRecord Row;
 
-        Row.sender_uid = friend_info.value("sender_uid").toInt();
-        Row.receiver_uid = friend_info.value("receiver_uid").toInt();
+        Row.sender_uid = friend_info.value("sender_uid").toString().toInt();
+        Row.receiver_uid = friend_info.value("receiver_uid").toString().toInt();
         Row.datetime = friend_info.value("datetime").toString();
         Row.message = friend_info.value("message").toString();
 

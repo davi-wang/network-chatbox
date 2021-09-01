@@ -6,17 +6,20 @@ ChatWindow::ChatWindow(QWidget *parent, QString friend_name, int friend_uid, int
     ui(new Ui::ChatWindow)
 {
     ui->setupUi(this);
+
     client = ClientServer::GetInstance();
-    setWindowTitle(friend_nickname);
     connect(client,SIGNAL(sychro_history()),this,SLOT(LoadHistory()));
+    setWindowTitle(friend_nickname);
+
+    connect(ui->msgtxtEdit, SIGNAL(returnPressed()), ui->sendBtn, SLOT(on_sendBtn_clicked()), Qt::UniqueConnection);
     connect(client,SIGNAL(send_message()),this,SLOT(newMessage()));
+
 
 }
 
 ChatWindow::~ChatWindow()
 {
     delete ui;
-
 }
 
 void ChatWindow::displayMessage(QString username, const QString &datetime, const QString &text)
@@ -57,11 +60,14 @@ void ChatWindow::on_sendBtn_clicked()
 
 void ChatWindow::LoadHistory()
 {
+    qDebug()<<"Enter LoadHistory";
     while(!client->HistoryInfo.empty())
     {
         ChatRecord row=client->HistoryInfo.front();
+
         if(row.sender_uid==client->local_uid)
         {
+
             displayMessage(client->UsrName,row.datetime,row.message);
 
         }
@@ -71,4 +77,9 @@ void ChatWindow::LoadHistory()
         }
         client->HistoryInfo.pop_front();
     }
+}
+
+void ChatWindow::closeEvent(QCloseEvent *event)
+{
+    qDebug() << "window closed";
 }

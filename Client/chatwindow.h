@@ -22,10 +22,12 @@ public:
     ~ChatWindow();
 
 private slots:
+    void closeEvent(QCloseEvent *event) override;
     void newMessage();
   //  void displayHistory(const QJsonObject &);
     void LoadHistory();
     void on_sendBtn_clicked();
+
 
 private:
     void sendMessage();

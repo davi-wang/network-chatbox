@@ -33,6 +33,7 @@ public:
     void SendMsg(Connection::DataType header,QJsonObject &data)
     {
         connector->sendMessage(header,data);
+        qDebug()<<"Send Msg";
     }
 
     int local_uid;
