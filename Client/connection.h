@@ -62,6 +62,7 @@ signals:
 private slots:
     void connectionUp();
     void processReadyRead();
+    void parseMessage();
     void sendPing();
     void sendPong();
 

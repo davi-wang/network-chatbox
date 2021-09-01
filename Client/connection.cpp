@@ -1,7 +1,8 @@
 #include "connection.h"
 
-static const int PongTimeout = 60 * 1000;
-static const int PingInterval = 5 * 1000;
+// 用于检测连接状态
+static const int PongTimeout = 120 * 1000;  // 120秒无响应 则断开连接
+static const int PingInterval = 10 * 1000;  // ping消息发送间隔
 
 Connection::Connection(QObject *parent)
     : QTcpSocket(parent)
@@ -19,9 +20,11 @@ Connection::Connection(QObject *parent)
 
 bool Connection::sendMessage(DataType header, const QJsonObject &data)
 {
+    // 先将JSON数据转换为Byte Array
     QJsonDocument json(data);
     QJsonDocument::JsonFormat format = QJsonDocument::Compact;
     QByteArray message = json.toJson(format);
+    // 写报消息头 编制JSON串长度信息为Byte Array
     int json_length = message.size();
     QByteArray json_size_before_padding = QString::number(json_length).toUtf8();
     QByteArray padding_digits;
@@ -29,25 +32,36 @@ bool Connection::sendMessage(DataType header, const QJsonObject &data)
         padding_digits.append('0');
     }
     QByteArray json_size = padding_digits + json_size_before_padding;
-//    qDebug() << "json size = " << json_size;
-    // 发送定长9字节消息头，再发送JSON串
+    // 单条消息：定长9字节消息头，再接JSON串
     QByteArray send = encodeDataTypeToHeader(header) + json_size + message;
     return write(send) == send.size();
 }
 
 void Connection::processReadyRead()
 {
-    // 读取header，验证有效性
-    if (current_data_type == Undefined) {
-        if (!readHeader())
-            return;
+    // 循环处理 直至Socket缓冲中的所有消息均被解析完成
+    while (bytesAvailable())
+    {
+        parseMessage();
     }
-    // 读取json_size
+}
+
+void Connection::parseMessage()
+{
+    // 单条消息：解析数据类型 -> 解析长度编码 -> 解析JSON串
+    if (current_data_type == Undefined) {
+        if (!readHeader()) {
+            // 若header无效，则丢弃所有数据，等待下一个消息
+            qDebug() << "[PARSER] Invalid DataType!!! Discarding all buffer date...";
+            readAll();
+            return;
+        }
+    }
     QByteArray json_size_array = read(8);
     if (json_size_array.size() != 8)
         return;
     int json_size = json_size_array.toInt();
-    // 读取并解析Json
+    // 读取定长字节串，并解析Json为Json Object
     QByteArray data = read(json_size);
     if (data.size() != json_size)
         return;
@@ -71,14 +85,10 @@ void Connection::processReadyRead()
         }
     }
     else {
-        qDebug() << "Json parse error! error type " << json_error.error;
+        qDebug() << "[PARSER] Json parse error! error type " << json_error.error;
     }
     current_data_type = Undefined;
 
-    if(bytesAvailable())
-    {
-        processReadyRead();
-    }
 }
 
 void Connection::connectionUp()
@@ -93,7 +103,7 @@ void Connection::sendPing()
     // ping超过某一个时长没收到响应pong，则强制终止连接
     if (pong_time.elapsed() > PongTimeout) {
         abort();
-        qDebug() << "Connection is aborted for ping timeout.";
+        qDebug() << "[SOCKET] Connection is aborted for ping timeout.";
         return;
     }
     else {

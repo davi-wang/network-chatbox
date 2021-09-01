@@ -82,9 +82,7 @@ void ServerWindow::on_actiononlines_triggered()
 {
     Server* pServer = Server::getInstance();
     MySql* database = MySql::gethand();
-    qDebug() << pServer->onlines;
     QList<int> onlines_uid = pServer->onlines.keys();
-    qDebug() << "mapsize" << pServer->onlines.size();
     displayLine("[INFO] All logged in clients:");
     displayLine("[INFO] ---------uid-----email------------name--");
     for (const int &uid: onlines_uid) {
