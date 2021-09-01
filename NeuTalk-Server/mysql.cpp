@@ -107,8 +107,8 @@ bool MySql::login(QString email, QString password, int &uid){
             int flag = 0;
             while(sqlquery->next()){
                 if(password == sqlquery->value(3).toString()){
-                    qDebug() << "[DB] " << "denglu successfully !";
-                    emit dispalyUserstext("[DB]  denglu successfully !");
+                    qDebug() << "[DB] " << "register successfully !";
+                    emit dispalyUserstext("[DB]  register successfully !");
                     //登陆成功，跳转页面
                     uid = sqlquery->value(0).toInt();
                     flag = 1;
@@ -126,8 +126,8 @@ bool MySql::login(QString email, QString password, int &uid){
         }
     }
     else{
-        qDebug() << "[DB] " << "denglu failed !";
-        emit dispalyUserstext("[DB]  denglu failed !");
+        qDebug() << "[DB] " << "register failed !";
+        emit dispalyUserstext("[DB]  register failed !");
     }
     return false;
 }
@@ -138,8 +138,8 @@ bool MySql::queryInfo(QString tableName, QString column, QString info){
     if(sqlquery->prepare(str_select)){
         if(sqlquery->exec()){
             while(sqlquery->next()){
-                qDebug() << "[DB] " << "selected successfully !";
-                emit dispalyUserstext("[DB]  selected successfully !");
+//                qDebug() << "[DB] " << "selected successfully !";
+//                emit dispalyUserstext("[DB]  selected successfully !");
                 flag = 1;
             }
         }
@@ -166,11 +166,11 @@ QJsonObject MySql::queryUser(int uid){
         }
     }
     if(flag){
-        qDebug() << "[DB] " << "selected successfully !";
-        emit dispalyUserstext("[DB]  selected successfully !");
+//        qDebug() << "[DB] " << "selected successfully !";
+//        emit dispalyUserstext("[DB]  selected successfully !");
     }
     else{
-        qDebug() << "[DB] " << "no one was found !";
+//        qDebug() << "[DB] " << "no one was found !";
         emit dispalyUserstext("[DB]  no one was found !");
     }
     return json;
@@ -195,12 +195,12 @@ QJsonObject MySql::queryUserInfo(QString info){
         }
     }
     if(flag){
-        qDebug() << "[DB] " << "selected successfully !";
-        emit dispalyUserstext("[DB]  selected successfully !");
+//        qDebug() << "[DB] " << "selected successfully !";
+//        emit dispalyUserstext("[DB]  selected successfully !");
     }
     else{
-        qDebug() << "[DB] " << "no one was found !";
-        emit dispalyUserstext("[DB]  no one was found !");
+//        qDebug() << "[DB] " << "no one was found !";
+//        emit dispalyUserstext("[DB]  no one was found !");
     }
     return json;
 }
@@ -357,8 +357,8 @@ void MySql::insertSinglehistory(int sender_uid, int receiver_uid, QString words,
     QString insert = "INSERT INTO singlehistorytable" + QString::number(a_uid)+QString::number(b_uid)+"(sender_uid, receiver_uid, time, record) VALUES("+QString::number(sender_uid)+","+QString::number(receiver_uid)+",'"+datetime+"','"+words+"')";
     if(sqlquery->prepare(insert)){
         if(sqlquery->exec()){
-            qDebug() << "[DB] " << "insert record successfully !";
-            emit dispalyUserstext("[DB]  insert record successfully !");
+//            qDebug() << "[DB] " << "insert record successfully !";
+//            emit dispalyUserstext("[DB]  insert record successfully !");
         }
     }
     else{
@@ -387,7 +387,7 @@ QJsonObject MySql::queryHistorylist(int a_uid, int b_uid){
             }
             QJsonObject json;
             json.insert("history_list", QJsonValue(history_list));
-            qDebug() << "[DB] " << "show succeeded !";
+//            qDebug() << "[DB] " << "show succeeded !";
             return json;
 
         }

@@ -13,19 +13,19 @@ void MailSender::sendEmail(const QByteArray &recvaddr,
                            const QString &subject,
                            const QString &content)
 {
-    username = "wmy-zz@163.com";
-    password= "NNPWUNMXQIDSSAPP";
+    username = "xxdxx2021@126.com";
+    password = "ELNVCSPSLDTAEVWR";
 
     this->recvaddr = recvaddr;
     QByteArray usernametmp = username;
     QByteArray recvaddrtmp = recvaddr;
     clientsocket = new QTcpSocket();
-    this->clientsocket->connectToHost("smtp.163.com",25,QTcpSocket::ReadWrite);
+    this->clientsocket->connectToHost("smtp.126.com",25,QTcpSocket::ReadWrite);
     this->clientsocket->waitForConnected(1000);
     this->clientsocket->waitForReadyRead(1000);
 //    recvdata = clientsocket->readAll();
 //    qDebug() << "[Email] 1 " +recvdata;
-    this->clientsocket->write("HELO smtp.163.com\r\n");
+    this->clientsocket->write("HELO smtp.126.com\r\n");
     this->clientsocket->waitForReadyRead(1000);
 //    recvdata = clientsocket->readAll();
 //    qDebug() << "[Email] 2 " +recvdata;
