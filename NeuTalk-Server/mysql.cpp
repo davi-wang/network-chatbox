@@ -22,6 +22,7 @@ bool MySql::openDatabase(){
         emit dispalyUserstext("[DB]  database open OK !");
         createUserstable();
         createFriendshiptable();
+        createPublicchatroom();
         return true;
     }
     else{
@@ -400,4 +401,35 @@ QJsonObject MySql::queryHistorylist(int a_uid, int b_uid){
         emit dispalyUserstext("[DB]  wrong user's uid !");
     }
     return QJsonObject();
+}
+
+void MySql::createPublicchatroom(){
+    QStringList tablelist = database.tables();
+    sqlquery = new QSqlQuery(database);
+    if(!tablelist.contains("pcrhistorytable")){
+        QString createPCRhistory = "CREATE TABLE pcrhistorytable (sender_uid int, time text, record text not null)";
+        if(sqlquery->prepare(createPCRhistory)){
+            if(sqlquery->exec()){
+                qDebug() << "[DB] " << "create pcrhistorytable OK !";
+            }
+        }
+        else{
+            qDebug() << "[DB] " << "create pcrhistorytable command error !";
+        }
+    }
+    else{
+        qDebug()<<"PCR exists !";
+    }
+}
+
+void MySql::insertPCRhistory(int sender_uid, QString datetime, QString words){
+    QString str = "INSERT INTO pcrhistorytable (sender_uid, time, record) VALUES("+QString::number(sender_uid)+",'"+datetime+"','"+words+"')";
+    if(sqlquery->prepare(str)){
+        if(sqlquery->exec()){
+            qDebug() << "[DB] " << "insert record to PCR successfully !";
+        }
+    }
+    else{
+        qDebug() << "[DB] " << "insert to PCR fail !";
+    }
 }

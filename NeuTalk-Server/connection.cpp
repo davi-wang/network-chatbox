@@ -126,7 +126,7 @@ bool Connection::readHeader()
 {
     char c = read(1).at(0);
     if (c < '!') return false;
-    if (c > ';') return false;
+    if (c > '=') return false;
     current_data_type = DataType(int(c) - int('!'));
     return true;
 }

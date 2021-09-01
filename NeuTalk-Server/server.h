@@ -55,6 +55,8 @@ private:
 //    QList<Connection*> connections;
     EmailVerify email_verify;
     QMap<int, Connection*> onlines;
+    QMap<int, Connection*> in_room;
+    QMap<int, QString> in_room_name;
 };
 
 #endif // SERVER_H

@@ -144,6 +144,7 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
 //        emit displayText("[INFO] query chat history between " +
 //                         QString::number(from_uid) + " - " + QString::number(to_uid));
         QJsonObject sync_data = database->queryHistorylist(from_uid, to_uid);
+        sync_data.insert("request_uid", QJsonValue(to_uid));
         client_connection->sendMessage(Connection::C2_sychro_history, sync_data);
     }
     else if (header == Connection::F1_search_user)
@@ -175,6 +176,52 @@ void Server::processMessage(Connection::DataType header, const QJsonObject &data
         int query_user = data.value("uid").toInt();
         QJsonObject result = database->queryUser(query_user);
         client_connection->sendMessage(Connection::F5_request_user_info, result);
+    }
+    else if (header == Connection::B0_broadcast_msg)
+    {
+        // 公共聊天室，给所有在线用户转发
+        QList<int> room = in_room.keys();
+        for (int uid: room) {
+            in_room[uid]->sendMessage(Connection::B0_broadcast_msg, data);
+        }
+        database->insertPCRhistory(data.value("sender_uid").toInt(),
+                                   data.value("datetime").toString(), data.value("message").toString());
+    }
+    else if (header == Connection::B1_join)
+    {
+        in_room[data.value("uid").toInt()] = client_connection;
+        in_room_name[data.value("uid").toInt()] = data.value("username").toString();
+        // 遍历in_room_names映射，写JSON
+        QList<int> room_uids = in_room_name.keys();
+        QJsonArray in_rooms;
+        for (int uid: room_uids) {
+            in_rooms.append(QJsonValue(in_room_name[uid]));
+        }
+        QJsonObject json;
+        json.insert("online_list", in_rooms);
+        // 发送给所有在线的人，更新
+        QList<int> room = in_room.keys();
+        for (int uid: room) {
+            in_room[uid]->sendMessage(Connection::B2_synchro_list, json);
+        }
+    }
+    else if (header == Connection::B3_leave)
+    {
+        in_room.remove(data.value("uid").toInt());
+        in_room_name.remove(data.value("uid").toInt());
+        // 遍历in_room_names映射，写JSON
+        QList<int> room_uids = in_room_name.keys();
+        QJsonArray in_rooms;
+        for (int uid: room_uids) {
+            in_rooms.append(QJsonValue(in_room_name[uid]));
+        }
+        QJsonObject json;
+        json.insert("online_list", in_rooms);
+        // 发送给所有在线的人，更新
+        QList<int> room = in_room.keys();
+        for (int uid: room) {
+            in_room[uid]->sendMessage(Connection::B2_synchro_list, json);
+        }
     }
     else {
         emit displayText("[ERROR] Undefined message received:" + QString::number(header));

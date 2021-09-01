@@ -42,6 +42,8 @@ public:
     void createSinglehistorytable(int a_uid, int b_uid);//创建私聊消息记录表
     void insertSinglehistory(int sender_uid, int receiver_uid, QString words, QString time);//向特定记录表中插入消息记录
     QJsonObject queryHistorylist(int a_uid, int b_uid);//查询消息记录
+    void createPublicchatroom();//创建公共聊天室
+    void insertPCRhistory(int sender_uid, QString datetime, QString words);//记录公共聊天室内消息
 
 signals:
     void dispalyUserstext(const QString &);

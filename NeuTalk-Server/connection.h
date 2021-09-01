@@ -44,7 +44,11 @@ public:
         F2_return_users,
         F3_request_add_friend,
         F4_new_friend,
-        F5_request_user_info
+        F5_request_user_info,
+        B0_broadcast_msg,
+        B1_join,
+        B2_synchro_list,
+        B3_leave
         // ...
     };
 
