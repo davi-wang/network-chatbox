@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Widget</class>
- <widget class="QWidget" name="Widget">
+ <class>ChatWindow</class>
+ <widget class="QWidget" name="ChatWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>759</width>
-    <height>560</height>
+    <width>625</width>
+    <height>531</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>0</x>
      <y>10</y>
-     <width>751</width>
-     <height>541</height>
+     <width>621</width>
+     <height>511</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -63,7 +63,7 @@
         <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
@@ -111,13 +111,13 @@
               <number>0</number>
              </property>
              <property name="topMargin">
-              <number>0</number>
+              <number>6</number>
              </property>
              <property name="rightMargin">
               <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>0</number>
+              <number>6</number>
              </property>
              <item>
               <widget class="QFontComboBox" name="fontCbx"/>
@@ -232,20 +232,6 @@
               </widget>
              </item>
              <item>
-              <widget class="QToolButton" name="saveTBtn">
-               <property name="toolTip">
-                <string>保存聊天记录</string>
-               </property>
-               <property name="text">
-                <string>...</string>
-               </property>
-               <property name="icon">
-                <iconset resource="res.qrc">
-                 <normaloff>:/image/save.png</normaloff>:/image/save.png</iconset>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QToolButton" name="clearTBtn">
                <property name="toolTip">
                 <string>清空</string>
@@ -314,20 +300,6 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
-                <widget class="QPushButton" name="exitBtn">
-                 <property name="text">
-                  <string>退出</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="userNumLbl">
-                 <property name="text">
-                  <string>当前在线人数：0人</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <spacer name="horizontalSpacer">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
@@ -356,15 +328,6 @@
         </widget>
        </item>
       </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QTableWidget" name="tableWidget">
-      <column>
-       <property name="text">
-        <string>群成员</string>
-       </property>
-      </column>
      </widget>
     </item>
    </layout>

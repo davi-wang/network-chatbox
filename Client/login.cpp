@@ -1,27 +1,9 @@
 #include "login.h"
-#include "ui_login.h"
-#include <QIcon>
-#include <QToolButton>
-#include "widget.h"
-#include <QMessageBox>
-
-//void login::paintEvent(QPaintEvent *event)
-//{
-//    Q_UNUSED(event);
 
 
-//    QPainter painter;
-//    painter.begin(this);
-//    painter.setRenderHints(QPainter::Antialiasing,true);
-//    QPixmap pixmap(":/img/1.jpg");
-//    QPainterPath path;
-//    path.addEllipse(56,20,120,120);//加入一个圆形   绘图是从左上角的（56，20）坐标开始绘制的  ，120，120是绘图的宽高
-//    painter.setClipPath(path);
 
-//    painter.drawPixmap(QRect(56,20,120,120),pixmap);
 
-//    painter.end();
-//}
+
 
 login::login(QWidget *parent) :
     QWidget(parent),
@@ -32,60 +14,115 @@ login::login(QWidget *parent) :
 
     //框
     this->setWindowIcon(QIcon(":/image/1.jpg"));//设置框的图标 （路径是 “ 冒号+前缀+路径 ” ）
-    this->setWindowTitle("chat");//设置名称
-
+    this->setWindowTitle("Mychat");//设置名称
+    Repeater = ClientServer::GetInstance();//定义一个repeater指针
     //群成员部分
-    QList<QString> nameList;//昵称列表
-    nameList<<"111"<<"222"<<"333"<<"444"<<"555"<<"111"<<"222"<<"333"<<"444"<<"555";//这里写的是列表预置的用户昵称
-    QStringList iconNameList;//图标资源列表（头像）
-    iconNameList<<"1"<<"2"<<"3"<<"4"<<"5"<<"6"<<"7"<<"5"<<"6"<<"7";;//这里面写的是图片的名字
+    int cnt=Repeater->FriendList.size();
 
-    QVector<QToolButton*>vector;
-    for(int i=0;i<9;i++)
+    for(int i=0;i<cnt;i++)
     {
-        QToolButton *btn=new QToolButton(this);
 
-        //聊天窗口部分
-        btn->setIcon(QPixmap(QString(":/image/%1.png").arg(iconNameList[i])));//成员头像
-        btn->setIconSize(QPixmap(QString(":/image/%1.png").arg(iconNameList[i])).size());//设置图片的大小
+        //对 button进行重写
+        ShowFriends.push_back(nullptr);
+        ShowFriends[i]=new QToolButton(this);
 
         //群成员部分
-        btn->setText(QString("%1").arg(nameList[i]));//设置网名
-        btn->setIconSize(QSize(70,70)); //设置头像大小
-        btn->setAutoRaise(true);//设置透明
-        btn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);//设置显示格式（头像在单人框里的位置）
+        QString arg=Repeater->FriendList[Repeater->Friend_u_IDs[i]].NickName;
+        ShowFriends[i]->setText(arg);//设置网名
+
+        ShowFriends[i]->setAutoRaise(true);//设置透明
+        ShowFriends[i]->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);//设置显示格式（头像在单人框里的位置）
 
 
-        ui->vlayout->addWidget(btn);//把刚刚那一坨放到vlayout布局框里（变得有格式）
-        vector.push_back(btn);
+        ui->vlayout->addWidget(ShowFriends[i]);//把刚刚那一坨放到vlayout布局框里（变得有格式）
         IsShow.push_back(false);//初始化为false->该联系人的聊天窗口未打开
     }
+    connect(Repeater,SIGNAL(request_user_info()),this,SLOT(AddFriendFinish()));
 
-    for(int i=0;i<9;i++)
+    total=cnt;
+    for(int i=0;i<cnt;i++)
     {
-        connect(vector[i],&QToolButton::clicked,[=]()
+        qDebug()<<"OpenWindows";
+        connect(ShowFriends[i],&QToolButton::clicked,[=]()
         {
-            if(IsShow[i])//IsShow为true ->当窗口已经打开
-            {
-                QMessageBox::warning(this,"警告","该聊天窗口已被打开！");
-                return;
-            }
-            IsShow[i]=true;//窗口未打开,则打开窗口，并设置函数为“已打开状态”
-            Widget *widget=new Widget(nullptr,vector[i]->text());
-            widget->setWindowIcon(vector[i]->icon());
-            widget->setWindowTitle(vector[i]->text());
-            widget->show();
+           int id=Repeater->Friend_u_IDs[i];
+           qDebug()<<"OpenWindows";
+           QString Name=Repeater->FriendList[Repeater->Friend_u_IDs[i]].NickName;
+           ChatWindows[id]=new ChatWindow(this,Name,id,Repeater->local_uid);
+           ChatWindows[id]->show();
 
-            connect(widget,&Widget::closeWidget,this,[=]()//关闭时重置isshow函数
-            {
-                IsShow[i]=false;
-            });
         });
+
     }
 
+
 }
+
+
 
 login::~login()
 {
     delete ui;
+    int cnt=ShowFriends.size();
+    for(int i=0;i<cnt;i++)
+    {
+        delete ShowFriends[i];
+    }
 }
+
+void login::on_pushButton_clicked() //加好友
+{
+      bu = new AddFrd(nullptr); //打开加好友界面
+    connect(bu,SIGNAL(request_user_info()),this,SLOT(AddFriendFinish()));
+
+    bu->show();
+}
+
+
+
+void login::AddFriendFinish()
+{
+    int NewSize=Repeater->Friend_u_IDs.size();
+    for(int i=total;i<NewSize;i++)
+    {
+        ShowFriends.push_back(nullptr);
+    }
+    for(int i=total;i<NewSize;i++)
+    {
+
+        ShowFriends[i]=new QToolButton(this);
+
+        //群成员部分
+        QString arg=Repeater->FriendList[Repeater->Friend_u_IDs[i]].NickName;
+        ShowFriends[i]->setText(arg);//设置网名
+
+        ShowFriends[i]->setAutoRaise(true);//设置透明
+        ShowFriends[i]->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);//设置显示格式（头像在单人框里的位置）
+
+        qDebug()<<Repeater->Friend_u_IDs[i];
+        ui->vlayout->addWidget(ShowFriends[i]);//把刚刚那一坨放到vlayout布局框里（变得有格式）
+        IsShow.push_back(false);//初始化为false->该联系人的聊天窗口未打开
+        connect(ShowFriends[i],&QToolButton::clicked,[=]() //click
+        {
+
+            int id=Repeater->Friend_u_IDs[i];
+            QString Name=Repeater->FriendList[Repeater->Friend_u_IDs[i]].NickName;
+            ChatWindows[id]=new ChatWindow(this,Name,id,Repeater->local_uid);
+            ChatWindows[id]->show();
+
+
+        });
+
+
+    }
+
+    total=NewSize;
+
+    if(bu!=nullptr)
+    {
+        delete bu;
+    }
+
+}
+
+

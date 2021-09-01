@@ -11,6 +11,7 @@
 #include "QJsonValue"
 #include "QCryptographicHash"
 
+
 namespace Ui { class SignIn; }
 
 class SignIn : public QWidget
@@ -27,7 +28,6 @@ private slots:
 
     void on_userEdit_currentTextChanged(QString arg1); //通过userEdit索引自动填充密码
 
-    void on_toolButton_clicked(); //找回密码
 
 
     //与Repeater响应

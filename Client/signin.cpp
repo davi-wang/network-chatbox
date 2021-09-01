@@ -63,9 +63,12 @@ void SignIn::on_SigninBt_clicked() //登录
         hash.addData(byte_array);
         QByteArray result_byte_array = hash.result(); //返回最终的哈希值
         QString md5PassWord = result_byte_array.toHex(); // 转为QString类型填入JSON
-    json.insert("password", QJsonValue(password));
+    json.insert("password", QJsonValue(md5PassWord));
 
     Repeater->SendMsg(Connection::L1_request_login, json); //发送msg
+
+    //废掉按钮
+    ui->SigninBt->setEnabled(false);
 }
 
 void SignIn::on_SignonBt_clicked() //注册按钮
@@ -80,11 +83,6 @@ void SignIn::on_userEdit_currentTextChanged(QString arg1) //通过userEdit索引
     int indx = ui->userEdit->findText(arg1); //获取userEdit索引
     QString strpswd = ui->userEdit->itemData(indx).toString(); //找到对应的密码
     ui->pswdEdit->setText(strpswd); //填充
-}
-
-void SignIn::on_toolButton_clicked() //找回密码
-{
-    //发送回server端，得到密码
 }
 
 void SignIn::ShowLoggingProcess() //服务器已收到登录请求

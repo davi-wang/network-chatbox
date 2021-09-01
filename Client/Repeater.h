@@ -35,7 +35,7 @@ public:
         connector->sendMessage(header,data);
     }
 
-
+    int local_uid;
     QString UsrName;
     QJsonObject Register;
 
@@ -69,9 +69,9 @@ signals:
     void sychro_history();
     void send_message();
 
-    void return_users();
-    void new_friend();
-    void request_user_info();
+    void return_users();  //返回新好友列表
+    void new_friend();    //新好友uID
+    void request_user_info(); //好友列表中添加新好友信息
 
 
 private:

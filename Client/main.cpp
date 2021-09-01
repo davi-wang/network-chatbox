@@ -4,7 +4,7 @@
 #include <login.h>
 #include <signin.h>
 #include <signon.h>
-#include <widget.h>
+
 #include <buildconnect.h>
 #include <QDebug>
 #include <QSqlQuery>

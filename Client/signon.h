@@ -25,6 +25,7 @@ private slots:
     //自己的槽函数 /接收信号
     void ShowSending(); //请求已收到，正在发送
     void SendSuccess(); //发送验证邮件成功
+    void on_returnBt_clicked(); //返回登陆页面
 
 private:
     Ui::Signon *ui;

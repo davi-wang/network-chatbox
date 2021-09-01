@@ -281,6 +281,32 @@ font:11pt</string>
      <string>User Name</string>
     </property>
    </widget>
+   <widget class="QToolButton" name="returnBt">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>370</y>
+      <width>151</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QToolButton{
+	background-color: rgb(85,17,255,0);
+	color:rgb(224, 227, 234);
+	font-style:italic bold;
+	font-size:16px;
+}
+
+QToolButton:pressed{
+	background-color:rgb(255, 98, 98);
+	border-style:inset;
+}</string>
+    </property>
+    <property name="text">
+     <string>RETURN</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

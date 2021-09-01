@@ -24,6 +24,9 @@ void BuildConnect::on_Build_clicked()
     //告知已建立连接
     QMessageBox::information(this, "Information", "Contact has been established !");
 
+    //废掉按钮
+    ui->Build->setEnabled(false);
+
     SignIn * sign = new SignIn(nullptr); //新建登录页面
     this->close(); //关闭建联系页面
     sign->show(); //打开登陆页面

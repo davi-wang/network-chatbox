@@ -1,6 +1,6 @@
 QT       += core gui sql
 QT       += network
-
+QT += widgets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -18,33 +18,36 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     Repeater.cpp \
+    addfrd.cpp \
     buildconnect.cpp \
+    chatwindow.cpp \
     connection.cpp \
     login.cpp \
     main.cpp \
     signin.cpp \
     signon.cpp \
-    verification.cpp \
-    widget.cpp
+    verification.cpp
 
 HEADERS += \
     DataTypes.h \
     Repeater.h \
+    addfrd.h \
     buildconnect.h \
+    chatwindow.h \
     connection.h \
     login.h \
     signin.h \
     signon.h \
-    verification.h \
-    widget.h
+    verification.h
 
 FORMS += \
+    addfrd.ui \
     buildconnect.ui \
+    chatwindow.ui \
     login.ui \
     signin.ui \
     signon.ui \
-    verification.ui \
-    widget.ui
+    verification.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,6 +1,7 @@
 #include "signon.h"
 #include "ui_signon.h"
 #include "verification.h"
+#include "signin.h"
 
 Signon::Signon(QWidget *parent) :
     QWidget(parent),
@@ -60,6 +61,9 @@ void Signon::on_pushButton_2_clicked() //finish注册按钮 /若正确跳转登�
                 settings.setValue("nickname", nick); //昵称
                 settings.endGroup(); //关闭组
 
+                //废掉按钮
+                ui->pushButton_2->setEnabled(false);
+
                 //弹出验证码界面
                 Verification *ver = new Verification(nullptr); //创建新验证码窗口对象
                 this->close(); //注册页面关掉
@@ -76,4 +80,11 @@ void Signon::on_pushButton_2_clicked() //finish注册按钮 /若正确跳转登�
     else{ //告知密码不同错误
         QMessageBox::information(this, "tip", "The two passwords are different !");
     }
+}
+
+void Signon::on_returnBt_clicked() //返回登陆界面
+{
+    SignIn *s = new SignIn(nullptr); //创建新登陆页面
+    this->close(); //注册页面关掉
+    s->show(); //登录页面打开
 }

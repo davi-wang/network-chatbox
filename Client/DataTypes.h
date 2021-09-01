@@ -21,11 +21,8 @@ struct ReceieveText
     QString new_message;  // 聊天内容
     QString datetime_str;  // 什么时候发的，字符串格式
     QDateTime datetime ; // 什么时候发的格式处理
-    bool IfBold;//加粗
-    bool IfUnderline; //下划线
-    bool IfItalic;//倾斜
-    QFont style;//字体
-    QString size;//字号
+
+
 };
 
 struct ChatRecord
@@ -42,5 +39,7 @@ struct UsrInfo
     QString Email;
     QString NickName;
 };
+
+
 
 #endif // DATATYPES_H

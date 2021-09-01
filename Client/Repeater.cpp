@@ -24,7 +24,13 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
 
     case Connection::R2_verification_sending: emit verification_sending();break;
     case Connection::R3_verification_sent: emit verification_sent();break;
-    case Connection::R5_fail: emit Reg_fail(); break;
+    case Connection::R5_fail:
+    {
+        int Error = Data.value("error").toInt();
+         ErrorReason      = VerificationError(Error);
+         qDebug()<<ErrorReason;
+        emit Reg_fail(); break;
+    }
     case Connection::R6_success:
         emit Reg_Success();break;
 
@@ -34,13 +40,14 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
 
         int Error = Data.value("error").toInt();
          ErrorReason      = VerificationError(Error);
-
-        emit SignInFail();
+     qDebug()<<ErrorReason;
+        SignInFail( );
         break;
     }
     case Connection::L4_success:
     {
         connector->local_uid=Data.value("your_uid").toInt();
+        local_uid=connector->local_uid;
         connector->peer_uid=Data.value("server_uid").toInt();
         emit SignInSuccess();break;
     }
@@ -68,6 +75,7 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
     case Connection::F2_return_users:
     {
         QJsonArray list = Data.value("users_list").toArray();
+
             for (int i=0; i < list.size(); ++i) {
 
                 QJsonObject friend_info = list.at(i).toObject();
@@ -79,6 +87,11 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
                 NewFriends[Info.u_id]=Info;
                 NewFriend_u_ID.push_back(Info.u_id);
             }
+            QList<int> onlines_uid = NewFriends.keys();
+            for(int i=0;i<onlines_uid.size();i++)
+            {
+                qDebug()<<i;
+            }
             emit return_users();
             break;
     }
@@ -86,7 +99,10 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
     {
         NewFriend_ID=new int;
         *NewFriend_ID=Data.value("new_friend_uid").toInt();
-        emit new_friend();
+        QJsonObject json;
+        json.insert("uid",*NewFriend_ID);
+        connector->sendMessage(Connection::F5_request_user_info,json);
+        qDebug()<<"New Friend ID"<<*NewFriend_ID;
         break;
     }
     case Connection::F5_request_user_info:
@@ -99,10 +115,7 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
         FriendList[friends.u_id]=friends;
         Friend_u_IDs.push_back(friends.u_id);
 
-        NewFriends.clear();
-        NewFriend_u_ID.clear();
-        delete NewFriend_ID;
-
+        qDebug()<<"Success"<<*NewFriend_ID;
         emit request_user_info();
         break;
     }
@@ -119,11 +132,7 @@ void ClientServer::processRecievedTextMsg(QJsonObject Data)
     GetTextMsg.new_message= Data.value("message").toString();  // 聊天内容
     GetTextMsg.datetime_str= Data.value("datetime").toString();  // 什么时候发的，字符串格式
     GetTextMsg.datetime = QDateTime::fromString(GetTextMsg.datetime_str, "yyyy-MM-dd hh:mm:ss");  // 什么时候发的格式处理
-    GetTextMsg.IfBold=Data.value("IfBold").toBool();//加粗
-    GetTextMsg.IfUnderline=Data.value("IfUnderline").toBool();//下划线
-    GetTextMsg.IfItalic =Data.value("IfItalic").toBool();//倾斜
-    GetTextMsg.style=Data.value("style").toString();//字体
-    GetTextMsg.size=Data.value("size").toString();//字号
+
 }
 
 void ClientServer::parseHistoryList(QJsonObject data)
@@ -159,4 +168,5 @@ void ClientServer::parseFriendList(QJsonObject data)
         FriendList.insert(friends.u_id,friends);
         // 上面三个变量就可以存了
     }
+
 }
