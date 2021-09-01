@@ -52,12 +52,12 @@ void ChatWindow::on_sendBtn_clicked()
 
 void ChatWindow::LoadHistory(const QJsonObject &history)
 {
-    qDebug() << history;
+    ui->msgBrowser->clear();
     QJsonArray list = history.value("history_list").toArray();
     for (int i=0; i < list.size(); ++i) {
         QJsonObject chat_message = list.at(i).toObject();
         // 如果消息是对方发的
-        if (chat_message.value("from_uid") == to_uid) {
+        if (chat_message.value("sender_uid").toString().toInt() == to_uid) {
             displayMessage(friend_nickname,
                            chat_message.value("datetime").toString(),
                            chat_message.value("message").toString());
