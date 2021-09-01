@@ -24,7 +24,7 @@ public:
 private slots:
     void newMessage();
   //  void displayHistory(const QJsonObject &);
-
+    void LoadHistory();
     void on_sendBtn_clicked();
 
 private:
@@ -37,7 +37,7 @@ private:
     ClientServer* client ;
 
 
-    void LoadHistory();
+
 };
 
 #endif // CHATWINDOW_H
