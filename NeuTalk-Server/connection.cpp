@@ -74,10 +74,14 @@ void Connection::processReadyRead()
         qDebug() << "Json parse error! error type " << json_error.error;
     }
     current_data_type = Undefined;
+<<<<<<< HEAD
 
 
     if(bytesAvailable())
     {
+=======
+    if (bytesAvailable()) {
+>>>>>>> 1bf27906cb9aab4167b22e09d719bccd6b7459cc
         processReadyRead();
     }
 }
