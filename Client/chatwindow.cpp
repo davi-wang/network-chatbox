@@ -11,7 +11,8 @@ ChatWindow::ChatWindow(QWidget *parent, QString friend_name, int friend_uid, int
     connect(client,SIGNAL(sychro_history()),this,SLOT(LoadHistory()));
     setWindowTitle(friend_nickname);
 
-    connect(ui->msgtxtEdit, SIGNAL(returnPressed()), ui->sendBtn, SLOT(on_sendBtn_clicked()), Qt::UniqueConnection);
+
+
     connect(client,SIGNAL(send_message()),this,SLOT(newMessage()));
 
 

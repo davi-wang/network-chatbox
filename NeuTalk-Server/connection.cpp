@@ -88,15 +88,7 @@ void Connection::parseMessage()
         qDebug() << "[PARSER] Json parse error! error type " << json_error.error;
     }
     current_data_type = Undefined;
-<<<<<<< HEAD
 
-
-    if(bytesAvailable())
-    {
-        processReadyRead();
-    }
-=======
->>>>>>> 3064123ca4ed7f76c832c54982d8cb8bd3d9fddd
 }
 
 void Connection::connectionUp()
