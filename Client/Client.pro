@@ -24,6 +24,7 @@ SOURCES += \
     connection.cpp \
     login.cpp \
     main.cpp \
+    pcr.cpp \
     signin.cpp \
     signon.cpp \
     verification.cpp
@@ -36,6 +37,7 @@ HEADERS += \
     chatwindow.h \
     connection.h \
     login.h \
+    pcr.h \
     signin.h \
     signon.h \
     verification.h
@@ -45,6 +47,7 @@ FORMS += \
     buildconnect.ui \
     chatwindow.ui \
     login.ui \
+    pcr.ui \
     signin.ui \
     signon.ui \
     verification.ui

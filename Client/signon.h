@@ -7,6 +7,7 @@
 #include "QSettings"
 #include "QJsonObject"
 #include "QJsonValue"
+#include "signin.h"
 
 namespace Ui { class Signon; }
 
@@ -15,7 +16,7 @@ class Signon : public QWidget
     Q_OBJECT
 
 public:
-    explicit Signon(QWidget *parent = nullptr);
+    explicit Signon(QWidget *parent = nullptr, SignIn *loginwindow = nullptr);
     ~Signon();
 
 private slots:
@@ -30,6 +31,7 @@ private slots:
 private:
     Ui::Signon *ui;
     ClientServer * Repeater = ClientServer::GetInstance();
+    SignIn * loginwindow;
 };
 
 #endif // SIGNON_H

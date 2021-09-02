@@ -73,6 +73,9 @@ signals:
       void DistributeHistory(const QJsonObject &);//分发历史信息
       void DistributeMsg(const QJsonObject &);//分发信息
 
+      void NewMsgInPCR(const QJsonObject &);//聊天室收到新消息
+      void SynList(const QJsonObject &);//同步在线群成员
+
 
 
 

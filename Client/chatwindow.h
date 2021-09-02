@@ -29,7 +29,7 @@ private slots:
 
 private:
     void sendMessage();
-    void displayMessage(QString, const QString&, const QString&);
+    void displayMessage(QString, const QString &, const QString &,const QString &,const int &,const int,const int);
     Ui::ChatWindow *ui;
     QString friend_nickname;
     int to_uid;

@@ -12,6 +12,13 @@ login::login(QWidget *parent) :
     ui->setupUi(this);
 
 
+    //初始化昵称和uid
+    ClientServer * data = ClientServer::GetInstance();
+    int id = data->local_uid; //调
+    QString nickname = data->UsrName;
+    ui->label->setNum(id);
+    ui->label_2->setText(nickname);
+
     //框
     this->setWindowIcon(QIcon(":/image/1.jpg"));//设置框的图标 （路径是 “ 冒号+前缀+路径 ” ）
     this->setWindowTitle("Mychat");//设置名称
@@ -157,4 +164,19 @@ void login::DistributeMsg(const QJsonObject &Data)
    int friend_id=Data.value("from_uid").toInt();
    if (ChatWindows.contains(friend_id))
         ChatWindows[friend_id]->newMessage(Data);
+}
+
+void login::on_joininPCR_clicked()
+{
+    if(mo == nullptr){
+        mo = new PCR(nullptr);
+    }
+    //打开公共聊天室
+    //发送本人加入公共聊天室的信号到服务端
+    QJsonObject json;
+    ClientServer* client = ClientServer::GetInstance();
+    json.insert("uid", QJsonValue(client->local_uid));
+    json.insert("username",client->UsrName);
+    client->SendMsg(Connection::B1_join, json);
+    mo->show();
 }

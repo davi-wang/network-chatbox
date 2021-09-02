@@ -23,6 +23,7 @@ struct ReceieveText
     QDateTime datetime ; // 什么时候发的格式处理
 
 
+
 };
 
 struct ChatRecord

@@ -3,8 +3,8 @@
 #include "verification.h"
 #include "signin.h"
 
-Signon::Signon(QWidget *parent) :
-    QWidget(parent),
+Signon::Signon(QWidget *parent, SignIn *tmp) :
+    QWidget(parent), loginwindow(tmp),
     ui(new Ui::Signon)
 {
     ui->setupUi(this);
@@ -65,7 +65,7 @@ void Signon::on_pushButton_2_clicked() //finish注册按钮 /若正确跳转登�
                 ui->pushButton_2->setEnabled(false);
 
                 //弹出验证码界面
-                Verification *ver = new Verification(nullptr); //创建新验证码窗口对象
+                Verification *ver = new Verification(nullptr, loginwindow); //创建新验证码窗口对象
                 this->close(); //注册页面关掉
                 ver->show(); //验证码页面打开
             }
@@ -84,7 +84,6 @@ void Signon::on_pushButton_2_clicked() //finish注册按钮 /若正确跳转登�
 
 void Signon::on_returnBt_clicked() //返回登陆界面
 {
-    SignIn *s = new SignIn(nullptr); //创建新登陆页面
     this->close(); //注册页面关掉
-    s->show(); //登录页面打开
+    this->loginwindow->show(); //登录页面打开
 }

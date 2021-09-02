@@ -121,6 +121,16 @@ void ClientServer::ProcessMsg(Connection::DataType header,const QJsonObject &Dat
         emit request_user_info();
         break;
     }
+    case Connection::B0_broadcast_msg:
+    {
+        emit NewMsgInPCR(Data);
+        break;
+    }
+    case Connection::B2_synchro_list:
+    {
+        emit SynList(Data);
+        break;
+    }
     default: qDebug()<<"Oops, invalid header!";
 
     }

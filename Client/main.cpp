@@ -8,6 +8,8 @@
 #include <buildconnect.h>
 #include <QDebug>
 #include <QSqlQuery>
+#include <pcr.h>
+
 
 int main(int argc, char *argv[])
 {
@@ -23,5 +25,10 @@ int main(int argc, char *argv[])
 //    signon.show();
     BuildConnect BCt; //建立联系页面
     BCt.show();
+//    ChatWindow x;//聊天框
+//    x.show();
+//    PCR x;
+//    x.show();
+
     return a.exec();
 }

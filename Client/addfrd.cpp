@@ -66,7 +66,7 @@ void AddFrd::getF(){ //服务器返回查到的匹配用户列表
 
         //群成员部分
         QString arg=Repeater->NewFriends[Repeater->NewFriend_u_ID[i]].NickName;
-        vector[i]->setText(arg);//设置网名
+        QString arg2 = Repeater->NewFriends[Repeater->NewFriend_u_ID[i]].Email;
         vector[i]->setIconSize(QSize(70,70)); //设置头像大小
         vector[i]->setAutoRaise(true);//设置透明
         vector[i]->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);//设置显示格式（头像在单人框里的位置）

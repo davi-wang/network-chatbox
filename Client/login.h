@@ -14,6 +14,7 @@
 #include "addfrd.h"
 #include"chatwindow.h"
 #include<QMap>
+#include "pcr.h"
 
 
 namespace Ui {
@@ -39,6 +40,7 @@ private slots:
     void AddFriendFinish();
     void DistributeHistory(const QJsonObject &);  //历史分发
     void DistributeMsg(const QJsonObject &);//信息分发
+    void on_joininPCR_clicked();//加入聊天室按钮
 
 private:
     Ui::login *ui;
@@ -50,7 +52,7 @@ private:
     int total;
 
     AddFrd *  bu=nullptr;
-
+    PCR * mo = nullptr;
 };
 
 #endif // LOGIN_H

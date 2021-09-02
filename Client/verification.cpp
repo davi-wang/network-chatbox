@@ -3,8 +3,8 @@
 #include "signin.h"
 #include "signon.h"
 
-Verification::Verification(QWidget *parent) :
-    QWidget(parent),
+Verification::Verification(QWidget *parent, SignIn *loginwindow) :
+    QWidget(parent),loginwindow(loginwindow),
     ui(new Ui::Verification)
 {
     ui->setupUi(this);
@@ -25,22 +25,21 @@ void Verification::SignOnFail(){ //注册失败，返回失败原因
     if(ableif == 0){ //注册成功
         //无问题，注册成功
         QMessageBox::information(this, "tip", "Sign on success !");
-        SignIn *sig = new SignIn(nullptr); //创建新登录窗口对象
         this->close(); //注册页面关掉
-        sig->show(); //登录页面打开
+        this->loginwindow->show(); //登录页面打开
     }
     //注册失败
     else if(ableif == 1){ //无效邮箱
         QMessageBox::information(this, "tip", "Invalid mailbox ！");
         //退回注册页面
-        Signon *sig = new Signon(nullptr); //创建新注册窗口对象
+        Signon *sig = new Signon(nullptr,loginwindow); //创建新注册窗口对象
         this->close(); //验证页面关闭
         sig->show(); //注册页面打开
     }
     else if(ableif == 2 || ableif == 3){ //超时 或 验证码错误
         QMessageBox::information(this, "tip", "Verification code error or failure, you can reply to resend.");
         //重新发送 /退回上一个页面
-        Signon* re = new Signon(nullptr); //创建新注册窗口对象
+        Signon* re = new Signon(nullptr,loginwindow); //创建新注册窗口对象
         this->close(); //验证码页面关掉
         re->show(); //注册页面打开
     }
@@ -49,9 +48,8 @@ void Verification::SignOnFail(){ //注册失败，返回失败原因
 void Verification::SignOnSuccess(){ //注册成功，服务器返回账户uid
     //无问题，注册成功
     QMessageBox::information(this, "tip", "Sign on success !");
-    SignIn * sig = new SignIn(nullptr); //创建新登录窗口对象
     this->close(); //注册页面关掉
-    sig->show(); //登录页面打开
+    this->loginwindow->show(); //登录页面打开
 }
 
 void Verification::on_OKBt_clicked() //OK按钮

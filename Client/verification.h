@@ -6,6 +6,7 @@
 #include "QMessageBox"
 #include "QJsonObject"
 #include "QJsonValue"
+#include "signin.h"
 
 namespace Ui { class Verification; }
 
@@ -14,7 +15,7 @@ class Verification : public QWidget
     Q_OBJECT
 
 public:
-    explicit Verification(QWidget *parent = nullptr);
+    explicit Verification(QWidget *parent = nullptr, SignIn * loginwindow = nullptr);
     ~Verification();
 
 private slots:
@@ -28,6 +29,7 @@ private slots:
 private:
     Ui::Verification *ui;
     ClientServer * Repeater = ClientServer::GetInstance();
+    SignIn * loginwindow;
 };
 
 #endif // VERIFICATION_H

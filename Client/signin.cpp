@@ -67,13 +67,11 @@ void SignIn::on_SigninBt_clicked() //登录
 
     Repeater->SendMsg(Connection::L1_request_login, json); //发送msg
 
-    //废掉按钮
-    ui->SigninBt->setEnabled(false);
 }
 
 void SignIn::on_SignonBt_clicked() //注册按钮
 {
-    Signon *sig = new Signon(nullptr); //创建新注册窗口对象
+    Signon *sig = new Signon(nullptr,this); //创建新注册窗口对象
     this->close(); //登录页面关掉
     sig->show(); //注册页面打开
 }
